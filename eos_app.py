@@ -22,7 +22,6 @@ class EOSUploadApp(App):
         yield FileDrop(id="filedrop")
 
     def on_mount(self):
-        #self.query_one("filedrop")
         self.query_one("#filedrop").focus()
 
     def on_file_drop_dropped(self, event: FileDrop.Dropped) -> None:
@@ -34,8 +33,7 @@ class EOSUploadApp(App):
         response = self.upload_file(filenames[0], filepaths[0])
         if response:
             self.query_one("#filedrop").styles.border = ("round", "green")
-            self.query_one("#filedrop").txt = (f"Uploaded '[yellow]{filenames[0]}[/yellow]' to [yellow]{self.code}[/yellow]\n\nURL")
-            #self.query_one("#filedrop").txt = (f"Uploaded '[yellow]{filenames[0]}[/yellow]' to [yellow]{self.code}[/yellow]\n\nURL: {response['url']}\n\nComponent: https://itkpd-test.unicorncollege.cz/componentView?code={self.code}")
+            self.query_one("#filedrop").txt = (f"Uploaded file '[yellow]{filenames[0]}[/yellow]' to [yellow]{self.code}[/yellow]\n\nComponent: https://itkpd.unicornuniversity.net/componentView?code={self.code}")
         else:
             self.query_one("#filedrop").styles.border = ("round", "red")
             self.query_one("#filedrop").txt = f"Failed to upload"
