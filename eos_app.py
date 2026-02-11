@@ -5,18 +5,13 @@ from textual.app import App, ComposeResult
 from textual_filedrop import FileDrop
 
 class EOSUploadApp(App):
-    client = None
-    code = None
-    description = None
-    upload_type = None
-
     DEFAULT_CSS = """
         Screen {
             align: center middle;
         }
     """
 
-    def __init__(self, client, code, description, upload_type="component"):
+    def __init__(self, client: itkdb.Client, code: str, description: str, upload_type: str = "component"):
         self.client = client
         self.code = code
         self.description = description
@@ -45,13 +40,14 @@ class EOSUploadApp(App):
             self.query_one("#filedrop").styles.border = ("round", "red")
             self.query_one("#filedrop").txt = f"Failed to upload"
 
-    def upload_file(self, filename, filepath):
+    def upload_file(self, filename: str, filepath: str):
         data = {
             "title": filename,
             "description": self.description,
             "url": Path(filepath),
             "type": "file"
         }
+
         if self.upload_type == "component":
             data["component"] = self.code
         elif self.upload_type == "testrun":
@@ -103,16 +99,11 @@ def main(inargs=None):
 
     args = parser.parse_args(inargs)
 
-    client = itkdb.Client(use_eos=True)
-    app = EOSUploadApp(client, args.code, args.description,
+    itkClient = itkdb.Client(use_eos=True)
+    itkClient.user.authenticate()
+    app = EOSUploadApp(itkClient, args.code, args.description,
                        args.upload_type)
     app.run()
-
-    #debugging
-    #import pprint
-    #component = client.get("getComponent", json={"component": args.component})["attachments"]
-    #pprint.pprint(component)
-
 
 if __name__ == "__main__":
     main()
