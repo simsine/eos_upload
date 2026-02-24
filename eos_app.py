@@ -99,8 +99,7 @@ def main(inargs=None):
 
     itkClient = itkdb.Client(use_eos=True)
     itkClient.user.authenticate()
-    app = EOSUploadApp(itkClient, args.code, args.description,
-                       args.upload_type)
+    app = EOSUploadApp(itkClient, args.code, args.description, args.upload_type)
     app.run()
 
 if __name__ == "__main__":
