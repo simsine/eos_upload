@@ -1,49 +1,17 @@
-## Oppsett
+# Setup and installation
 
-### Opprette virtual environment (venv)
+## uv package manager
 
-##### Linux
+To run this project you need to have the uv package manage for python installed
+Follow the instructions in [the uv docs](https://docs.astral.sh/uv/getting-started/installation/)
 
-```sh
-python3 -m venv ./.venv
+Confirm that uv is installed in your shell by typing uv help, this should print the help information from uv
+
+## Initializing the project
+
+After you have confirmed your installation of uv works you can run the following command to start the app
+uv will automatically handle the setup and installation of the required project dependencies
+
 ```
-
-##### Windows
-
-```sh
-python -m venv ./.venv
-```
-
-### Aktivere virtual environment
-
-##### Linux
-
-```sh
-source .venv/bin/activate
-```
-
-##### Windows
-
-```sh
-# Command Prompt
-.\venv\Scripts\activate
-
-# PowerShell
-.\venv\Scripts\Activate.ps1
-```
-
-### Installere krevde pakker
-
-##### Linux og Windows
-
-```sh
-pip install -r requirements.txt
-```
-
-### Lage ny dependency-fil fra installerte pakker
-
-##### Linux og Windows
-
-```sh
-pip freeze > requirements.txt
+uv run -- streamlit run
 ```
