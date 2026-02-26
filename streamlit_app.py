@@ -3,7 +3,7 @@ import itkdb as itk
 
 MAX_FILE_UPLOAD_SIZE_MB = 1000
 INPUT_KEY_ITKDB_ACCESS_CODE1 = "input_itk_key_1"
-INPUT_KEY_ITKDB_ACCESS_CODE2 = "input_itk_key_1"
+INPUT_KEY_ITKDB_ACCESS_CODE2 = "input_itk_key_2"
 
 st.write("# Please authenticate")
 
