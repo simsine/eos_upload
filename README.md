@@ -12,6 +12,16 @@ Confirm that uv is installed in your shell by typing uv help, this should print 
 After you have confirmed your installation of uv works you can run the following command to start the app
 uv will automatically handle the setup and installation of the required project dependencies
 
-```
+```bash
 uv run -- streamlit run
+```
+
+# Development
+
+## Testing
+
+Testing is performed using the pytest framework. Tests can be run using the integrated UI in your IDE or the pytest command
+
+```bash
+uv run -- pytest
 ```

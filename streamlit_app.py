@@ -10,13 +10,13 @@ st.write("# Please authenticate")
 st.text_input("Access code 1", key = INPUT_KEY_ITKDB_ACCESS_CODE1)
 st.text_input("Access code 2", key = INPUT_KEY_ITKDB_ACCESS_CODE2)
 
-itkdb_user = itk.core.User(
-	access_code1 = st.session_state[INPUT_KEY_ITKDB_ACCESS_CODE1],
-	access_code2 = st.session_state[INPUT_KEY_ITKDB_ACCESS_CODE2],
-)
-
 if st.session_state[INPUT_KEY_ITKDB_ACCESS_CODE1] and st.session_state[INPUT_KEY_ITKDB_ACCESS_CODE2]:
+	itkdb_user = itk.core.User(
+		access_code1 = st.session_state[INPUT_KEY_ITKDB_ACCESS_CODE1],
+		access_code2 = st.session_state[INPUT_KEY_ITKDB_ACCESS_CODE2],
+	)
 	itkdb_user.authenticate()
+
 	itk_client = itk.Client(use_eos=True, user=itkdb_user)
 
 	if itk_client.user.is_authenticated:
