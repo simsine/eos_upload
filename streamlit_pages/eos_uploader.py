@@ -56,7 +56,7 @@ class EOS_UPLOADER_PAGE(App_Page):
 				res = self.upload_file(image, image.name, image.file_id, input_code, input_description, input_upload_type)
 				
 				if not res:
-					st.error("Error in uploading files")
+					st.error(f"Error in uploading file: {image.name}")
 			
 			st.success("Files uploaded successfully")
 
