@@ -1,4 +1,5 @@
 from enum import Enum
+from io import BytesIO
 from requests import Response
 import streamlit as st
 import itkdb as itk
@@ -52,18 +53,26 @@ class EOS_UPLOADER_PAGE(App_Page):
 	
 		if st.button("Upload files"):
 			for image in input_test_images:
-				res = self.upload_file(image, input_code, input_description, input_upload_type)
+				res = self.upload_file(image, image.name, image.file_id, input_code, input_description, input_upload_type)
 				
 				if not res:
 					st.error("Error in uploading files")
 			
 			st.success("Files uploaded successfully")
 
-	def upload_file(self, file, code: str, description: str, upload_type: str) -> None | Response:
+	def upload_file(
+		self,
+		file_data: BytesIO,
+		file_name: str,
+		file_id: str,
+		code: str,
+		description: str,
+		upload_type: str,
+	) -> Response | None:
 		data = {
-			"title": file.name,
+			"title": file_name,
 			"description": description,
-			"url": file.file_id,
+			"url": file_id,
 			"type": "file",
 		}
 
@@ -74,7 +83,7 @@ class EOS_UPLOADER_PAGE(App_Page):
 
 		response = None
 		try:
-			files = {"data": itk_utils.get_file_components({"data": file})}
+			files = {"data": itk_utils.get_file_components({"data": file_data})}
 			if upload_type == UploadType.Component.value:
 				response = self.itk_client.post("createComponentAttachment", data=data, files=files)
 			elif upload_type == UploadType.Testrun.value:
