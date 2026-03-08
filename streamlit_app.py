@@ -7,7 +7,7 @@ ITKDB_ACCESS_CODE1 = os.environ.get("ITKDB_ACCESS_CODE1")
 ITKDB_ACCESS_CODE2 = os.environ.get("ITKDB_ACCESS_CODE2")
 
 if ITKDB_ACCESS_CODE1 is None or ITKDB_ACCESS_CODE2 is None:
-	raise EnvironmentError("ITKDB_ACCESS_CODE1 or ITKDB_ACCESS_CODE1 is missing, did you forget to set them?")
+	raise EnvironmentError("ITKDB_ACCESS_CODE1 or ITKDB_ACCESS_CODE2 is missing, did you forget to set them?")
 
 itkdb_user = itk.core.User(
 	access_code1 = ITKDB_ACCESS_CODE1,
