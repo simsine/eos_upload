@@ -31,7 +31,7 @@ PAGES_DIR = "atlantest/streamlit_pages/"
 streamlit_pages = st.navigation({
 	"Tests" : [
 		st.Page(PAGES_DIR + "eos_uploader.py", title="EOS Uploader", icon=":material/add_photo_alternate:"),
-		st.Page(PAGES_DIR + "visual_inspection.py", title="Visual Inspection", icon=":material/biotech:"),
+		st.Page(PAGES_DIR + "visual_inspection.py", title="Visual Inspection", icon=":material/visibility:"),
 		st.Page(PAGES_DIR + "metrology.py", title="Metrology", icon=":material/straighten:"),
 		st.Page(PAGES_DIR + "dc_test.py", title = "DC Test", icon=":material/bolt:"),
 		],

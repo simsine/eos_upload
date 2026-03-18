@@ -6,6 +6,6 @@ class Visual_Inspection_Page(Base_Page):
 	def main(self):
 		st.write("# Visual Inspection")
 		st.write("This page is under construction.")
-		st.set_page_config(page_title="Visual Inspection", page_icon=":material/biotech:")
+		st.set_page_config(page_title="Visual Inspection", page_icon=":material/visibility:")
 		
 Visual_Inspection_Page().main()
