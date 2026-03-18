@@ -26,9 +26,10 @@ st.session_state["itk_client"] = itk_client
 ### Authentication
 
 ### Init Streamlit page structure
+PAGES_DIR = "atlantest/streamlit_pages/"
 streamlit_pages = st.navigation([
-	st.Page("streamlit_pages/index.py"),
-	st.Page("streamlit_pages/eos_uploader.py"),
+	st.Page(PAGES_DIR + "index.py"),
+	st.Page(PAGES_DIR + "eos_uploader.py"),
 ])
 # Render the page navigation bar
 streamlit_pages.run()

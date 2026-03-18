@@ -5,13 +5,13 @@ import streamlit as st
 import itkdb as itk
 import itkdb.utils as itk_utils
 
-from app_page import App_Page
+from atlantest.base_page import Base_Page
 
 class UploadType(Enum):
 	Component = "Component"
 	Testrun = "Testrun"
 
-class EOS_UPLOADER_PAGE(App_Page):
+class EOS_Uploader_Page(Base_Page):
 	MAX_FILE_UPLOAD_SIZE_MB = 1000
 
 	def main(self):
@@ -94,4 +94,4 @@ class EOS_UPLOADER_PAGE(App_Page):
 
 		return response
 
-EOS_UPLOADER_PAGE().main()
+EOS_Uploader_Page().main()
