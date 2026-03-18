@@ -26,11 +26,20 @@ st.session_state["itk_client"] = itk_client
 ### Authentication
 
 ### Init Streamlit page structure
+# Create Streamlit navigation object
 PAGES_DIR = "atlantest/streamlit_pages/"
-streamlit_pages = st.navigation([
-	st.Page(PAGES_DIR + "index.py"),
-	st.Page(PAGES_DIR + "eos_uploader.py"),
-])
-# Render the page navigation bar
+streamlit_pages = st.navigation({
+	"Tests" : [
+		st.Page(PAGES_DIR + "eos_uploader.py", title="EOS Uploader", icon=":material/add_photo_alternate:"),
+		st.Page(PAGES_DIR + "visual_inspection.py", title="Visual Inspection", icon=":material/biotech:"),
+		st.Page(PAGES_DIR + "metrology.py", title="Metrology", icon=":material/straighten:"),
+		st.Page(PAGES_DIR + "dc_test.py", title = "DC Test", icon=":material/bolt:"),
+		],
+	"Components" : [
+		st.Page(PAGES_DIR + "all_components.py", title="All", icon=":material/list:"),
+		st.Page(PAGES_DIR + "ready_to_ship.py", title="Ready to Ship", icon=":material/package_2:"),
+	]
+})	
+# Render the currently selected page
 streamlit_pages.run()
 ### Init streamlit page sctructure
