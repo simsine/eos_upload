@@ -52,13 +52,16 @@ class EOS_Uploader_Page(Base_Page):
 		if len(input_test_images) <= 0:
 			return
 	
-		if st.button("Upload files"):
-			for image in input_test_images:
-				res = self.upload_file(image, image.name, image.file_id, input_code, input_description, input_upload_type)
-				
-				if not res:
-					st.error(f"Error in uploading file: {image.name}")
-			
+		if not st.button("Upload files"):
+			return
+
+		for image in input_test_images:
+			res = self.upload_file(image, image.name, image.file_id, input_code, input_description, input_upload_type)
+
+			if not res:
+				st.error(f"Error in uploading file: {image.name}")
+				return
+
 			st.success("Files uploaded successfully")
 
 	def upload_file(
