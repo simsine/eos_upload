@@ -1,8 +1,8 @@
 import streamlit as st
 
-from app_page import App_Page
+from atlantest.base_page import Base_Page
 
-class Index_Page(App_Page):
+class Index_Page(Base_Page):
 	MAX_FILE_UPLOAD_SIZE_MB = 1000
 
 	def main(self):

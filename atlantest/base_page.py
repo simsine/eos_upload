@@ -1,7 +1,7 @@
 import itkdb as itk
 import streamlit as st
 
-class App_Page():
+class Base_Page():
 	itk_client: itk.Client
 
 	def __init__(self, itk_client: itk.Client|None = None) -> None:
