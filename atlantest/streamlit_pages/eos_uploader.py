@@ -16,6 +16,7 @@ class EOS_Uploader_Page(Base_Page):
 
 	def main(self):
 		st.write("# EOS Uploader")
+		st.write(":red[This page is under construction.]")
 		st.set_page_config(page_title="EOS Uploader", page_icon=":material/add_photo_alternate:")
 
 		input_code = st.text_input(
