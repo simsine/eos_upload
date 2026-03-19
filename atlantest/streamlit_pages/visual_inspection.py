@@ -100,7 +100,7 @@ class Visual_Inspection_Page(Base_Page):
 
 		input_overall_grade = st.radio(
 			label = "Overall grade (1 no damages, 2 no action, 3 re-clean, 4 rework, 5 discard)",
-			options = (1, 2, 3),
+			options = (1, 2, 3, 4, 5),
 			horizontal = True,
 			index = None
 		)
