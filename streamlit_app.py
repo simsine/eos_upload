@@ -28,6 +28,17 @@ st.session_state["itk_client"] = itk_client
 ### Init Streamlit page structure
 # Create Streamlit navigation object
 PAGES_DIR = "atlantest/streamlit_pages/"
+
+LOGO_URL_LARGE = "atlantest/static/logoipsum.svg"
+LOGO_URL_SMALL = "atlantest/static/logoipsum.svg"
+
+st.logo(
+    LOGO_URL_LARGE,
+	size = "large",
+    link = None,
+    icon_image=LOGO_URL_SMALL,
+)
+
 streamlit_pages = st.navigation({
 	"Tests" : [
 		st.Page(PAGES_DIR + "eos_uploader.py", title="EOS Uploader", icon=":material/add_photo_alternate:"),
