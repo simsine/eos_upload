@@ -19,80 +19,144 @@ class Visual_Inspection_Page(Base_Page):
 			options = ("UNIBERGEN", "UNIOSLO")
 		)
 
-		range_input_fields = [
-			st.radio(
-				label = "Wirebond pads clear of contamination (grade 1-3)",
-				options = (1, 2, 3),
-				horizontal = True,
-				index = None
-			),
-			st.radio(
-				label = "Particulate contamination (grade 1-3)",
-				options = (1, 2, 3),
-				horizontal = True,
-				index = None
-			),
-			st.radio(
-				label = "Watermarks (grade 1-3)",
-				options = (1, 2, 3),
-				horizontal = True,
-				index = None
-			),
-			st.radio(
-				label = "Scratches (grade 1-3)",
-				options = (1, 2, 3),
-				horizontal = True,
-				index = None
-			),
-			st.radio(
-				label = "Traces (grade 1-3)",
-				options = (1, 2, 3),
-				horizontal = True,
-				index = None
-			),
-			st.radio(
-				label = "Soldermask irregularities (grade 1-3)",
-				options = (1, 2, 3),
-				horizontal = True,
-				index = None
-			),
-			st.radio(
-				label = "HV LV Data connector assembly issue (grade 1-3)",
-				options = (1, 2, 3),
-				horizontal = True,
-				index = None
-			),
-			st.radio(
-				label = "Solder spills (grade 1-3)",
-				options = (1, 2, 3),
-				horizontal = True,
-				index = None
-			),
-			st.radio(
-				label = "Component misalignment (grade 1-3)",
-				options = (1, 2, 3),
-				horizontal = True,
-				index = None
-			),
-			st.radio(
-				label = "Shorts or close proximity (grade 1-3)",
-				options = (1, 2, 3),
-				horizontal = True,
-				index = None
-			),
-			st.radio(
-				label = "Tombstone or misalignment (grade 1-3)",
-				options = (1, 2, 3),
-				horizontal = True,
-				index = None
-			),
-			st.radio(
-				label = "Overall grade (1 no damages, 2 no action, 3 re-clean, 4 rework, 5 discard)",
-				options = (1, 2, 3, 4, 5),
-				horizontal = True,
-				index = None
+		st.divider()
+
+		range_input_fields = []
+	
+		with st.container(horizontal = True, vertical_alignment="center", horizontal_alignment="right"):
+			st.text("Wirebond pads clear of contamination (grade 1-3)")
+			range_input_fields.append(
+				st.radio(
+					key="wire_pads",
+					label = "Wirebond pads clear of contamination (grade 1-3)",
+					options = (1, 2, 3),
+					horizontal = True,
+					index = None,
+					label_visibility="collapsed"
+				)
 			)
-		]
+		with st.container(horizontal = True, vertical_alignment="center", horizontal_alignment="right"):
+			st.text("Particulate contamination (grade 1-3)")
+			range_input_fields.append(
+				st.radio(
+					key="particulate_contamination",
+					label = "Particulate contamination (grade 1-3)",
+					options = (1, 2, 3),
+					horizontal = True,
+					index = None,
+					label_visibility="collapsed"
+				)
+			)
+		with st.container(horizontal = True, vertical_alignment="center", horizontal_alignment="right"):
+			st.text("Watermarks (grade 1-3)")
+			range_input_fields.append(
+				st.radio(
+					key="watermarks",
+					label = "Watermarks (grade 1-3)",
+					options = (1, 2, 3),
+					horizontal = True,
+					index = None,
+					label_visibility="collapsed"
+				)
+			)
+		with st.container(horizontal = True, vertical_alignment="center", horizontal_alignment="right"):
+			st.text("Scratches (grade 1-3)")
+			range_input_fields.append(
+				st.radio(
+					key="scratches",
+					label = "Scratches (grade 1-3)",
+					options = (1, 2, 3),
+					horizontal = True,
+					index = None,
+					label_visibility="collapsed"
+				)
+			)
+		with st.container(horizontal = True, vertical_alignment="center", horizontal_alignment="right"):
+			st.text("Traces (grade 1-3)")
+			range_input_fields.append(
+				st.radio(
+					label = "Traces (grade 1-3)",
+					options = (1, 2, 3),
+					horizontal = True,
+					index = None,
+					label_visibility="collapsed"
+				)
+			)
+		with st.container(horizontal = True, vertical_alignment="center", horizontal_alignment="right"):
+			st.text("Soldermask irregularities (grade 1-3)")
+			range_input_fields.append(
+				st.radio(
+					label = "Soldermask irregularities (grade 1-3)",
+					options = (1, 2, 3),
+					horizontal = True,
+					index = None,
+					label_visibility="collapsed"
+				)
+			)
+		with st.container(horizontal = True, vertical_alignment="center", horizontal_alignment="right"):
+			st.text("HV LV Data connector assembly issue (grade 1-3)")
+			range_input_fields.append(
+				st.radio(
+					label = "HV LV Data connector assembly issue (grade 1-3)",
+					options = (1, 2, 3),
+					horizontal = True,
+					index = None,
+					label_visibility="collapsed"
+				)
+			)
+		with st.container(horizontal = True, vertical_alignment="center", horizontal_alignment="right"):
+			st.text("Solder spills (grade 1-3)")
+			range_input_fields.append(
+				st.radio(
+					label = "Solder spills (grade 1-3)",
+					options = (1, 2, 3),
+					horizontal = True,
+					index = None,
+					label_visibility="collapsed"
+				)
+			)
+		with st.container(horizontal = True, vertical_alignment="center", horizontal_alignment="right"):
+			st.text("Component misalignment (grade 1-3)")
+			range_input_fields.append(
+				st.radio(
+					label = "Component misalignment (grade 1-3)",
+					options = (1, 2, 3),
+					horizontal = True,
+					index = None,
+					label_visibility="collapsed"
+				)
+			)
+		with st.container(horizontal = True, vertical_alignment="center", horizontal_alignment="right"):
+			st.text("Shorts or close proximity (grade 1-3)")
+			range_input_fields.append(
+				st.radio(
+					label = "Shorts or close proximity (grade 1-3)",
+					options = (1, 2, 3),
+					horizontal = True,
+					index = None,
+					label_visibility="collapsed"
+				)
+			)
+		with st.container(horizontal = True, vertical_alignment="center", horizontal_alignment="right"):
+			st.text("Tombstone or misalignment (grade 1-3)")
+			range_input_fields.append(
+				st.radio(
+					label = "Tombstone or misalignment (grade 1-3)",
+					options = (1, 2, 3),
+					horizontal = True,
+					index = None,
+					label_visibility="collapsed"
+				)
+			)
+
+		st.divider()
+
+		st.radio(
+			label = "Overall grade (1 no damages, 2 no action, 3 re-clean, 4 rework, 5 discard)",
+			options = (1, 2, 3, 4, 5),
+			horizontal = True,
+			index = None
+		)
 
 		input_observation = st.text_area(
 			label = "Observations",
