@@ -50,7 +50,22 @@ streamlit_pages = st.navigation({
 		st.Page(PAGES_DIR + "all_components.py", title="All", icon=":material/list:"),
 		st.Page(PAGES_DIR + "ready_to_ship.py", title="Ready to Ship", icon=":material/package_2:"),
 	]
-})	
+})
+
+client = itk.Client()
+client.user.authenticate()
+user = client.get("getUser", json={"userIdentity": client.user.identity})
+institution_code = None
+if "institutions" in user and user["institutions"]:
+    institution_code = user["institutions"][0].get("code")
+
+with st.sidebar:
+	st.write(f":material/account_circle: {itk_client.user.name}")
+	if institution_code:
+		st.write(f":material/account_balance: {institution_code}")
+	else:
+		st.write("Institution: Unknown")
+
 # Render the currently selected page
 streamlit_pages.run()
 ### Init streamlit page sctructure
