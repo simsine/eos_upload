@@ -23,8 +23,7 @@ class Visual_Inspection_Page(Base_Page):
 
 		range_input_fields = []
 	
-		with st.container(horizontal = True, vertical_alignment="center", horizontal_alignment="right"):
-			st.text("Wirebond pads clear of contamination (grade 1-3)")
+		with st.container(horizontal = True, vertical_alignment="center", horizontal_alignment="left"):
 			range_input_fields.append(
 				st.radio(
 					key="wire_pads",
@@ -35,8 +34,8 @@ class Visual_Inspection_Page(Base_Page):
 					label_visibility="collapsed"
 				)
 			)
-		with st.container(horizontal = True, vertical_alignment="center", horizontal_alignment="right"):
-			st.text("Particulate contamination (grade 1-3)")
+			st.text("Wirebond pads clear of contamination (grade 1-3)")
+		with st.container(horizontal = True, vertical_alignment="center", horizontal_alignment="left"):
 			range_input_fields.append(
 				st.radio(
 					key="particulate_contamination",
@@ -47,8 +46,8 @@ class Visual_Inspection_Page(Base_Page):
 					label_visibility="collapsed"
 				)
 			)
-		with st.container(horizontal = True, vertical_alignment="center", horizontal_alignment="right"):
-			st.text("Watermarks (grade 1-3)")
+			st.text("Particulate contamination (grade 1-3)")
+		with st.container(horizontal = True, vertical_alignment="center", horizontal_alignment="left"):
 			range_input_fields.append(
 				st.radio(
 					key="watermarks",
@@ -59,8 +58,8 @@ class Visual_Inspection_Page(Base_Page):
 					label_visibility="collapsed"
 				)
 			)
-		with st.container(horizontal = True, vertical_alignment="center", horizontal_alignment="right"):
-			st.text("Scratches (grade 1-3)")
+			st.text("Watermarks (grade 1-3)")
+		with st.container(horizontal = True, vertical_alignment="center", horizontal_alignment="left"):
 			range_input_fields.append(
 				st.radio(
 					key="scratches",
@@ -71,8 +70,8 @@ class Visual_Inspection_Page(Base_Page):
 					label_visibility="collapsed"
 				)
 			)
-		with st.container(horizontal = True, vertical_alignment="center", horizontal_alignment="right"):
-			st.text("Traces (grade 1-3)")
+			st.text("Scratches (grade 1-3)")
+		with st.container(horizontal = True, vertical_alignment="center", horizontal_alignment="left"):
 			range_input_fields.append(
 				st.radio(
 					label = "Traces (grade 1-3)",
@@ -82,8 +81,8 @@ class Visual_Inspection_Page(Base_Page):
 					label_visibility="collapsed"
 				)
 			)
-		with st.container(horizontal = True, vertical_alignment="center", horizontal_alignment="right"):
-			st.text("Soldermask irregularities (grade 1-3)")
+			st.text("Traces (grade 1-3)")
+		with st.container(horizontal = True, vertical_alignment="center", horizontal_alignment="left"):
 			range_input_fields.append(
 				st.radio(
 					label = "Soldermask irregularities (grade 1-3)",
@@ -93,8 +92,8 @@ class Visual_Inspection_Page(Base_Page):
 					label_visibility="collapsed"
 				)
 			)
-		with st.container(horizontal = True, vertical_alignment="center", horizontal_alignment="right"):
-			st.text("HV LV Data connector assembly issue (grade 1-3)")
+			st.text("Soldermask irregularities (grade 1-3)")
+		with st.container(horizontal = True, vertical_alignment="center", horizontal_alignment="left"):
 			range_input_fields.append(
 				st.radio(
 					label = "HV LV Data connector assembly issue (grade 1-3)",
@@ -104,8 +103,8 @@ class Visual_Inspection_Page(Base_Page):
 					label_visibility="collapsed"
 				)
 			)
-		with st.container(horizontal = True, vertical_alignment="center", horizontal_alignment="right"):
-			st.text("Solder spills (grade 1-3)")
+			st.text("HV LV Data connector assembly issue (grade 1-3)")
+		with st.container(horizontal = True, vertical_alignment="center", horizontal_alignment="left"):
 			range_input_fields.append(
 				st.radio(
 					label = "Solder spills (grade 1-3)",
@@ -115,8 +114,8 @@ class Visual_Inspection_Page(Base_Page):
 					label_visibility="collapsed"
 				)
 			)
-		with st.container(horizontal = True, vertical_alignment="center", horizontal_alignment="right"):
-			st.text("Component misalignment (grade 1-3)")
+			st.text("Solder spills (grade 1-3)")
+		with st.container(horizontal = True, vertical_alignment="center", horizontal_alignment="left"):
 			range_input_fields.append(
 				st.radio(
 					label = "Component misalignment (grade 1-3)",
@@ -126,8 +125,8 @@ class Visual_Inspection_Page(Base_Page):
 					label_visibility="collapsed"
 				)
 			)
-		with st.container(horizontal = True, vertical_alignment="center", horizontal_alignment="right"):
-			st.text("Shorts or close proximity (grade 1-3)")
+			st.text("Component misalignment (grade 1-3)")
+		with st.container(horizontal = True, vertical_alignment="center", horizontal_alignment="left"):
 			range_input_fields.append(
 				st.radio(
 					label = "Shorts or close proximity (grade 1-3)",
@@ -137,8 +136,8 @@ class Visual_Inspection_Page(Base_Page):
 					label_visibility="collapsed"
 				)
 			)
-		with st.container(horizontal = True, vertical_alignment="center", horizontal_alignment="right"):
-			st.text("Tombstone or misalignment (grade 1-3)")
+			st.text("Shorts or close proximity (grade 1-3)")
+		with st.container(horizontal = True, vertical_alignment="center", horizontal_alignment="left"):
 			range_input_fields.append(
 				st.radio(
 					label = "Tombstone or misalignment (grade 1-3)",
@@ -148,6 +147,7 @@ class Visual_Inspection_Page(Base_Page):
 					label_visibility="collapsed"
 				)
 			)
+			st.text("Tombstone or misalignment (grade 1-3)")
 
 		st.divider()
 
