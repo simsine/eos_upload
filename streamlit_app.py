@@ -7,7 +7,7 @@ ITKDB_ACCESS_CODE1 = os.environ.get("ITKDB_ACCESS_CODE1")
 ITKDB_ACCESS_CODE2 = os.environ.get("ITKDB_ACCESS_CODE2")
 
 if ITKDB_ACCESS_CODE1 is None or ITKDB_ACCESS_CODE2 is None:
-	raise EnvironmentError("ITKDB_ACCESS_CODE1 or ITKDB_ACCESS_CODE2 is missing, did you forget to set them?")
+	raise EnvironmentError("ITKDB_ACCESS_CODE1 or ITKDB_ACCESS_CODE2 is missing from your global environment, did you forget to set them?")
 
 itkdb_user = itk.core.User(
 	access_code1 = ITKDB_ACCESS_CODE1,
@@ -15,7 +15,7 @@ itkdb_user = itk.core.User(
 )
 
 itkdb_user.authenticate()
-itk_client = itk.Client(use_eos=True, user=itkdb_user)
+itk_client = itk.Client(use_eos =True, user=itkdb_user)
 
 if not itk_client.user.is_authenticated:
 	raise Exception("Authentication error, are your codes correct?")
@@ -39,7 +39,8 @@ streamlit_pages = st.navigation({
 		st.Page(PAGES_DIR + "all_components.py", title="All", icon=":material/list:"),
 		st.Page(PAGES_DIR + "ready_to_ship.py", title="Ready to Ship", icon=":material/package_2:"),
 	]
-})	
+})
+
 # Render the currently selected page
 streamlit_pages.run()
 ### Init streamlit page sctructure
