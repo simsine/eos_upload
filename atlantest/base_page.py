@@ -17,5 +17,4 @@ class Base_Page(metaclass = ABCMeta):
 		"""
 		Main page render method to be overridden
 		"""
-		print("aaa")
 		pass
