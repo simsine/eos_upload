@@ -52,12 +52,11 @@ streamlit_pages = st.navigation({
 	]
 })
 
-client = itk.Client()
-client.user.authenticate()
-user = client.get("getUser", json={"userIdentity": client.user.identity})
+auth_user: dict = itk_client.get("getUser", json={"userIdentity": itk_client.user.identity}) # type: ignore
 institution_code = None
-if "institutions" in user and user["institutions"]:
-    institution_code = user["institutions"][0].get("code")
+
+if "institutions" in auth_user and auth_user["institutions"]:
+    institution_code = auth_user["institutions"][0].get("code")
 
 with st.sidebar:
 	st.write(f":material/account_circle: {itk_client.user.name}")
