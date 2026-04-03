@@ -1,14 +1,21 @@
+from abc import ABCMeta, abstractmethod
+
 import itkdb as itk
 import streamlit as st
 
-class Base_Page():
+class Base_Page(metaclass = ABCMeta):
 	itk_client: itk.Client
 
-	def __init__(self, itk_client: itk.Client|None = None) -> None:
-		if itk_client:
-			self.itk_client = itk_client
-		else:
-			itk_client = st.session_state.get("itk_client")
-			if itk_client is None:
-				raise Exception("Failure in getting itk client")
-			self.itk_client = itk_client
+	def __init__(self) -> None:
+		itk_client = st.session_state.get("itk_client")
+		if itk_client is None:
+			raise Exception("Failure in getting itk client")
+		self.itk_client = itk_client
+
+	@abstractmethod
+	def main(self):
+		"""
+		Main page render method to be overridden
+		"""
+		print("aaa")
+		pass
