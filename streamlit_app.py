@@ -28,6 +28,17 @@ st.session_state["itk_client"] = itk_client
 ### Init Streamlit page structure
 # Create Streamlit navigation object
 PAGES_DIR = "atlantest/streamlit_pages/"
+
+LOGO_URL_LARGE = "atlantest/static/logoipsum.svg"
+LOGO_URL_SMALL = "atlantest/static/logoipsum.svg"
+
+st.logo(
+    LOGO_URL_LARGE,
+	size = "large",
+    link = None,
+    icon_image=LOGO_URL_SMALL,
+)
+
 streamlit_pages = st.navigation({
 	"Tests" : [
 		st.Page(PAGES_DIR + "eos_uploader.py", title="EOS Uploader", icon=":material/add_photo_alternate:"),
@@ -40,6 +51,19 @@ streamlit_pages = st.navigation({
 		st.Page(PAGES_DIR + "ready_to_ship.py", title="Ready to Ship", icon=":material/package_2:"),
 	]
 })
+
+auth_user: dict = itk_client.get("getUser", json={"userIdentity": itk_client.user.identity}) # type: ignore
+institution_code = None
+
+if "institutions" in auth_user and auth_user["institutions"]:
+    institution_code = auth_user["institutions"][0].get("code")
+
+with st.sidebar:
+	st.write(f":material/account_circle: {itk_client.user.name}")
+	if institution_code:
+		st.write(f":material/account_balance: {institution_code}")
+	else:
+		st.write("Institution: Unknown")
 
 # Render the currently selected page
 streamlit_pages.run()
