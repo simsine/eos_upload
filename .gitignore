@@ -12,3 +12,4 @@ wheels/
 ### uv init preset
 
 .vscode
+.pytest_cache
