@@ -2,6 +2,7 @@ from itkdb.responses import PagedResponse
 import streamlit as st
 
 from atlantest.base_page import Base_Page
+from atlantest.streamlit_pages.eos_uploader import EOS_Uploader_Page, UploadType
 
 class Visual_Inspection_Page(Base_Page):
 	# Names of test-fields to be graded 1-3
@@ -95,13 +96,23 @@ class Visual_Inspection_Page(Base_Page):
 			label = "Did this test get a passing grade?",
 		)
 
-		ALL_RANGE_FIELDS_FILLED = all(range_input_fields)
+		st.write("## Upload test images")
+
+		input_test_images = st.file_uploader(
+			label = "Please upload a file",
+			type = ["jpg", "jpeg", "png", "gif"],
+			max_upload_size = self.MAX_FILE_UPLOAD_SIZE_MB,
+			accept_multiple_files = True,
+		)
+
+		REQUIRED_FIELDS_FILLED = all(range_input_fields)
 
 		if st.button(
 			label = "Submit test",
-			disabled = not ALL_RANGE_FIELDS_FILLED,
-			help = "Please fill all fields before submitting results" if not ALL_RANGE_FIELDS_FILLED else "",
+			disabled = not REQUIRED_FIELDS_FILLED,
+			help = "Please fill all required fields before submitting results" if not REQUIRED_FIELDS_FILLED else "",
 		):
+			# Upload test data
 			upload_data = {
 				"testType": "VISUAL_INSPECTION",
 				"component": input_component_code,
@@ -117,8 +128,31 @@ class Visual_Inspection_Page(Base_Page):
 			}
 
 			st.write("Upload result:")
-			upload_res = self.itk_client.post("uploadTestRunResults", json = upload_data)
+			upload_res: dict = self.itk_client.post("uploadTestRunResults", json = upload_data) # type: ignore
 
-			st.json(upload_res)
+			if not upload_res:
+				st.error(f"Error in uploading test results: \n {upload_res}")
+				return
+
+			st.success("Results uploaded successfully")
+
+			testrun_id = upload_res["testRun"]["id"]
+
+			# Upload test images
+			for image in input_test_images:
+				res = EOS_Uploader_Page().upload_file(
+					file_data = image,
+					file_name = image.name,
+					file_id = image.file_id,
+					code = testrun_id,
+					description = "",
+					upload_type = UploadType.Testrun.value,
+				)
+
+				if not res:
+					st.error(f"Error in uploading file: {image.name}")
+					return
+
+			st.success("Attachments uploaded successfully")
 
 Visual_Inspection_Page().main()

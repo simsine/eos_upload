@@ -12,8 +12,6 @@ class UploadType(Enum):
 	Testrun = "Testrun"
 
 class EOS_Uploader_Page(Base_Page):
-	MAX_FILE_UPLOAD_SIZE_MB = 1000
-
 	def main(self):
 		st.write("# EOS Uploader")
 		st.write(":red[This page is under construction.]")
@@ -44,11 +42,6 @@ class EOS_Uploader_Page(Base_Page):
 			max_upload_size = self.MAX_FILE_UPLOAD_SIZE_MB,
 			accept_multiple_files = True,
 		)
-
-		# We print each uploaded image to the page
-		# if len(input_test_images) >= 1:
-		# 	for image in input_test_images:
-		# 		st.image(image.getvalue())
 
 		if len(input_test_images) <= 0:
 			return
