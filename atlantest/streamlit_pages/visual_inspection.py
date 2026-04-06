@@ -25,9 +25,6 @@ class Visual_Inspection_Page(Base_Page):
 
 		st.write("# Visual Inspection")
 
-		if 'key' not in st.session_state:
-			st.session_state['key'] = 'value'
-
 		input_component_code = st.text_input(
 			label = "Component serial number",
 			placeholder = "",
