@@ -13,5 +13,5 @@ After you have confirmed your installation of uv works you can run the following
 uv will automatically handle the setup and installation of the required project dependencies
 
 ```
-uv run -- streamlit run
+uv run -- streamlit run --server.runOnSave=true --server.showEmailPrompt=false
 ```
