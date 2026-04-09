@@ -60,11 +60,11 @@ class Visual_Inspection_Page(Base_Page):
 
 		st.write("Grade the following fields from 1 to 3, where 1 is the best grade and 3 the worst grade.")
 
-		range_input_fields = []
+		grade_input_fields = []
 
 		for grade_field_name in self.GRADE_FIELDS_DTO:
 			with st.container(horizontal = True, vertical_alignment = "center", horizontal_alignment = "left"):
-				range_input_fields.append(
+				grade_input_fields.append(
 					st.radio(
 						key = grade_field_name,
 						label = grade_field_name,
@@ -102,7 +102,7 @@ class Visual_Inspection_Page(Base_Page):
 			accept_multiple_files = True,
 		)
 
-		REQUIRED_FIELDS_FILLED = all(range_input_fields)
+		REQUIRED_FIELDS_FILLED = input_component_code and all(grade_input_fields) and input_overall_grade
 
 		if st.button(
 			label = "Submit test",
@@ -121,7 +121,7 @@ class Visual_Inspection_Page(Base_Page):
 				"results": {
 					"OVERALL_GRADE": input_overall_grade,
 					"OBSERVATION": input_observation,
-				} | { key: value for key, value in zip(self.GRADE_FIELDS_DTO, range_input_fields) }, # Adding all grading field values to results
+				} | { key: value for key, value in zip(self.GRADE_FIELDS_DTO, grade_input_fields) }, # Adding all grading field values to results
 			}
 
 			st.write("Upload result:")
