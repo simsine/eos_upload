@@ -57,7 +57,7 @@ class Visual_Inspection_Page(Base_Page):
 
 		st.divider()
 
-		st.write("## Inspection grades 1-3")
+		st.write("Grade the following fields from 1 to 3, where 1 is the best grade and 3 the worst grade.")
 
 		range_input_fields = []
 
@@ -89,7 +89,7 @@ class Visual_Inspection_Page(Base_Page):
 		)
 
 		input_test_result = st.checkbox(
-			label = "Did this test get a passing grade?",
+			label = "Did the test pass?",
 		)
 
 		ALL_RANGE_FIELDS_FILLED = all(range_input_fields)
