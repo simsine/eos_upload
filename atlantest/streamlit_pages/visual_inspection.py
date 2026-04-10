@@ -20,6 +20,19 @@ class Visual_Inspection_Page(Base_Page):
 		"SHORTS_OR_CLOSE_PROXIMITY_GRADE",
 		"OPENS_TOMBSTONING_GRADE",
 	}
+	GRADE_FIELDS_PRETTY = {
+		"Wirebond pads clear of contamination",
+		"Particulate contamination",
+		"Watermarks",
+		"Scratches",
+		"Traces",
+		"Soldermask irregularities",
+		"HV LV Data connector assembly issue",
+		"Solder spills",
+		"Component misalignment",
+		"Shorts or close proximity",
+		"Tombstone or misalignment",
+	}
 
 	def main(self):
 		st.set_page_config(page_title="Visual Inspection", page_icon=":material/visibility:")
@@ -62,19 +75,19 @@ class Visual_Inspection_Page(Base_Page):
 
 		grade_input_fields = []
 
-		for grade_field_name in self.GRADE_FIELDS_DTO:
+		for grade_field_dto, grade_field_pretty in zip(self.GRADE_FIELDS_DTO, self.GRADE_FIELDS_PRETTY):
 			with st.container(horizontal = True, vertical_alignment = "center", horizontal_alignment = "left"):
 				grade_input_fields.append(
 					st.radio(
-						key = grade_field_name,
-						label = grade_field_name,
+						key = grade_field_dto,
+						label = grade_field_dto,
 						options = (1, 2, 3),
 						horizontal = True,
 						index = None,
 						label_visibility="collapsed",
 					)
 				)
-				st.text(grade_field_name)
+				st.text(grade_field_pretty)
 
 		st.divider()
 
