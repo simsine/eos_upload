@@ -2,6 +2,7 @@ from itkdb.responses import PagedResponse
 import streamlit as st
 
 from atlantest.base_page import Base_Page
+from atlantest.streamlit_pages.eos_uploader import EOS_Uploader_Page, UploadType
 
 class Visual_Inspection_Page(Base_Page):
 	# Names of test-fields to be graded 1-3
@@ -18,6 +19,19 @@ class Visual_Inspection_Page(Base_Page):
 		"COMPONENT_MISALIGNMENT_GRADE",
 		"SHORTS_OR_CLOSE_PROXIMITY_GRADE",
 		"OPENS_TOMBSTONING_GRADE",
+	}
+	GRADE_FIELDS_PRETTY = {
+		"Wirebond pads clear of contamination",
+		"Particulate contamination",
+		"Watermarks",
+		"Scratches",
+		"Traces",
+		"Soldermask irregularities",
+		"HV LV Data connector assembly issue",
+		"Solder spills",
+		"Component misalignment",
+		"Shorts or close proximity",
+		"Tombstone or misalignment",
 	}
 
 	def main(self):
@@ -57,23 +71,23 @@ class Visual_Inspection_Page(Base_Page):
 
 		st.divider()
 
-		st.write("## Inspection grades 1-3")
+		st.write("Grade the following fields from 1 to 3, where 1 is the best grade and 3 the worst grade.")
 
-		range_input_fields = []
+		grade_input_fields = []
 
-		for grade_field_name in self.GRADE_FIELDS_DTO:
+		for grade_field_dto, grade_field_pretty in zip(self.GRADE_FIELDS_DTO, self.GRADE_FIELDS_PRETTY):
 			with st.container(horizontal = True, vertical_alignment = "center", horizontal_alignment = "left"):
-				range_input_fields.append(
+				grade_input_fields.append(
 					st.radio(
-						key = grade_field_name,
-						label = grade_field_name,
+						key = grade_field_dto,
+						label = grade_field_dto,
 						options = (1, 2, 3),
 						horizontal = True,
 						index = None,
 						label_visibility="collapsed",
 					)
 				)
-				st.text(grade_field_name)
+				st.text(grade_field_pretty)
 
 		st.divider()
 
@@ -89,16 +103,26 @@ class Visual_Inspection_Page(Base_Page):
 		)
 
 		input_test_result = st.checkbox(
-			label = "Did this test get a passing grade?",
+			label = "Did the test pass?",
 		)
 
-		ALL_RANGE_FIELDS_FILLED = all(range_input_fields)
+		st.write("## Upload test images")
+
+		input_test_images = st.file_uploader(
+			label = "Please upload a file",
+			type = ["jpg", "jpeg", "png", "gif"],
+			max_upload_size = self.MAX_FILE_UPLOAD_SIZE_MB,
+			accept_multiple_files = True,
+		)
+
+		REQUIRED_FIELDS_FILLED = input_component_code and all(grade_input_fields) and input_overall_grade
 
 		if st.button(
 			label = "Submit test",
-			disabled = not ALL_RANGE_FIELDS_FILLED,
-			help = "Please fill all fields before submitting results" if not ALL_RANGE_FIELDS_FILLED else "",
+			disabled = not REQUIRED_FIELDS_FILLED,
+			help = "Please fill all required fields before submitting results" if not REQUIRED_FIELDS_FILLED else "",
 		):
+			# Upload test data
 			upload_data = {
 				"testType": "VISUAL_INSPECTION",
 				"component": input_component_code,
@@ -110,12 +134,35 @@ class Visual_Inspection_Page(Base_Page):
 				"results": {
 					"OVERALL_GRADE": input_overall_grade,
 					"OBSERVATION": input_observation,
-				} | { key: value for key, value in zip(self.GRADE_FIELDS_DTO, range_input_fields) }, # Adding all grading field values to results
+				} | { key: value for key, value in zip(self.GRADE_FIELDS_DTO, grade_input_fields) }, # Adding all grading field values to results
 			}
 
 			st.write("Upload result:")
-			upload_res = self.itk_client.post("uploadTestRunResults", json = upload_data)
+			upload_res: dict = self.itk_client.post("uploadTestRunResults", json = upload_data) # type: ignore
 
-			st.json(upload_res)
+			if not upload_res:
+				st.error(f"Error in uploading test results: \n {upload_res}")
+				return
+
+			st.success("Results uploaded successfully")
+
+			testrun_id = upload_res["testRun"]["id"]
+
+			# Upload test images
+			for image in input_test_images:
+				res = EOS_Uploader_Page().upload_file(
+					file_data = image,
+					file_name = image.name,
+					file_id = image.file_id,
+					code = testrun_id,
+					description = "",
+					upload_type = UploadType.Testrun.value,
+				)
+
+				if not res:
+					st.error(f"Error in uploading file: {image.name}")
+					return
+
+			st.success("Attachments uploaded successfully")
 
 Visual_Inspection_Page().main()
