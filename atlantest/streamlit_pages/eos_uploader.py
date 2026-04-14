@@ -92,4 +92,5 @@ class EOS_Uploader_Page(Base_Page):
 
 		return response
 
-EOS_Uploader_Page().main()
+if __name__ == "__main__":
+	EOS_Uploader_Page().main()
