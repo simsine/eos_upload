@@ -7,5 +7,6 @@ class Ready_To_Ship_Page(Base_Page):
 		st.write("# Components - Ready to Ship")
 		st.write(":red[This page is under construction.]")
 		st.set_page_config(page_title="Components - Ready to Ship", page_icon=":material/package_2:")
-		
-Ready_To_Ship_Page().main()
+
+if __name__ == "__main__":
+	Ready_To_Ship_Page().main()

@@ -165,4 +165,5 @@ class Visual_Inspection_Page(Base_Page):
 
 			st.success("Attachments uploaded successfully")
 
-Visual_Inspection_Page().main()
+if __name__ == "__main__":
+	Visual_Inspection_Page().main()

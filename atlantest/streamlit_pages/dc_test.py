@@ -26,4 +26,5 @@ class DC_Test_Page(Base_Page):
 		if (not input_code or not input_description):
 			return
 
-DC_Test_Page().main()
+if __name__ == "__main__":
+	DC_Test_Page().main()
