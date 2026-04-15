@@ -29,8 +29,8 @@ st.session_state["itk_client"] = itk_client
 # Create Streamlit navigation object
 PAGES_DIR = "atlantest/streamlit_pages/"
 
-LOGO_URL_LARGE = "atlantest/static/logoipsum.svg"
-LOGO_URL_SMALL = "atlantest/static/logoipsum.svg"
+LOGO_URL_LARGE = "atlantest/static/logo.svg"
+LOGO_URL_SMALL = "atlantest/static/logo.svg"
 
 st.logo(
 	LOGO_URL_LARGE,
