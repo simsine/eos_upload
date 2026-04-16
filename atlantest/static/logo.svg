@@ -13,7 +13,7 @@
             letter-spacing: 0.2px;
             }
             .sub {
-            fill: #9CA3AF;
+            fill: #FFFFFF;
             font-family: "Inter", "Segoe UI", "Helvetica", Arial, sans-serif;
             font-weight: 500;
             font-size: 30px;
@@ -22,9 +22,8 @@
         </style>
     </defs>
 
-    <!-- Centered text block -->
     <g transform="translate(280,18)">
         <text class="main" x="0" y="25" text-anchor="middle">ITk Triplet Flex PDB</text>
-        <text class="sub" x="28" y="53" text-anchor="middle">Upload Tool</text>
+        <text class="sub" x="10" y="53" text-anchor="middle">Upload Tool</text>
     </g>
 </svg>
