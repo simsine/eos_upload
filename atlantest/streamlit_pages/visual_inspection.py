@@ -1,169 +1,262 @@
 from itkdb.responses import PagedResponse
 import streamlit as st
+import pandas as pd
 
 from atlantest.base_page import Base_Page
 from atlantest.streamlit_pages.eos_uploader import EOS_Uploader_Page, UploadType
 
 class Visual_Inspection_Page(Base_Page):
-	# Names of test-fields to be graded 1-3
-	GRADE_FIELDS_DTO = {
+	# Names of testfields to be graded 1-3
+	RANGE_DTO_FIELDS = [
+		"VISUAL_INSPECTION_FRONT_GRADE",
+		"VISUAL_INSPECTION_BACK_GRADE",
 		"WIREBOND_PADS_CONTAMINATION_GRADE",
 		"PARTICULATE_CONTAMINATION_GRADE",
 		"WATERMARKS_GRADE",
 		"SCRATCHES_GRADE",
-		"TRACES_GRADE",
 		"SOLDERMASK_IRREGULARITIES_GRADE",
-		"HV_LV_CONNECTOR_ASSEMBLY_GRADE",
-		"DATA_CONNECTOR_ASSEMBLY_GRADE",
+		"LV_CONNECTOR_ASSEMBLY_GRADE",
+		"DATA_HV_CONNECTOR_ASSEMBLY_GRADE",
 		"SOLDER_SPILLS_GRADE",
 		"COMPONENT_MISALIGNMENT_GRADE",
 		"SHORTS_OR_CLOSE_PROXIMITY_GRADE",
-		"OPENS_TOMBSTONING_GRADE",
-	}
-	GRADE_FIELDS_PRETTY = {
-		"Wirebond pads clear of contamination",
-		"Particulate contamination",
-		"Watermarks",
-		"Scratches",
-		"Traces",
-		"Soldermask irregularities",
-		"HV LV Data connector assembly issue",
-		"Solder spills",
-		"Component misalignment",
-		"Shorts or close proximity",
-		"Tombstone or misalignment",
-	}
+	]
+	REST_DTO_FIELDS = [
+		"OVERALL_GRADE",
+		"OBSERVATION",
+		"THICKNESS",
+	]
 
 	def main(self):
 		st.set_page_config(page_title="Visual Inspection", page_icon=":material/visibility:")
 
 		st.write("# Visual Inspection")
 
-		input_component_code = st.text_input(
-			label = "Component serial number",
-			placeholder = "",
-			value = st.session_state[self.CURRENT_COMPONENT_CODE_KEY] if self.CURRENT_COMPONENT_CODE_KEY in st.session_state else ""
-		)
+		form_tab, excel_tab = st.tabs(("Form", "Excel upload"))
 
-		if input_component_code:
-			st.session_state[self.CURRENT_COMPONENT_CODE_KEY] = input_component_code
+		with form_tab:
+			input_component_code = st.text_input(
+				label = "Component serial number",
+				placeholder = "",
+			)
 
-		auth_user: dict = self.itk_client.get("getUser", json = {"userIdentity": self.itk_client.user.identity}) # type: ignore
-		user_institution_code = auth_user["institutions"][0].get("code")
+			auth_user: dict = self.itk_client.get("getUser", json = {"userIdentity": self.itk_client.user.identity}) # type: ignore
+			user_institution_code = auth_user["institutions"][0].get("code")
 
-		institutions: PagedResponse = self.itk_client.get("listInstitutions") # type: ignore
-		institution_codes = list(map(lambda institution: institution.get("code"), institutions.data))
-		# We move the institution of the user to the front
-		institution_codes.insert(0, institution_codes.pop(institution_codes.index(user_institution_code)))
+			input_institution = st.selectbox(
+				label = "Institution",
+				accept_new_options = False,
+				options = user_institution_code,
+				index = 0, # Since the user institution should be at index 0
+			)
 
-		input_institution = st.selectbox(
-			label = "Institution",
-			accept_new_options = False,
-			options = institution_codes,
-			index = 0, # Since the user institution should be at index 0
-		)
+			excel_test_run_number = st.number_input(
+				label = "Test run number",
+				key = "form_test_run_number",
+				step = 1,
+				min_value = 1,
+			)
 
-		input_test_run_number = st.number_input(
-			label = "Test run number",
-			step = 1,
-			min_value = 1,
-		)
+			st.divider()
 
-		st.divider()
+			st.write("Grade the following fields from 1 to 3, where 1 is the best grade and 3 the worst grade.")
 
-		st.write("Grade the following fields from 1 to 3, where 1 is the best grade and 3 the worst grade.")
+			grade_input_fields = []
 
-		grade_input_fields = []
-
-		for grade_field_dto, grade_field_pretty in zip(self.GRADE_FIELDS_DTO, self.GRADE_FIELDS_PRETTY):
-			with st.container(horizontal = True, vertical_alignment = "center", horizontal_alignment = "left"):
-				grade_input_fields.append(
-					st.radio(
-						key = grade_field_dto,
-						label = grade_field_dto,
-						options = (1, 2, 3),
-						horizontal = True,
-						index = None,
-						label_visibility="collapsed",
+			for grade_field_dto in self.RANGE_DTO_FIELDS:
+				with st.container(horizontal = True, vertical_alignment = "center", horizontal_alignment = "left"):
+					grade_input_fields.append(
+						st.radio(
+							key = grade_field_dto,
+							label = grade_field_dto,
+							options = (1, 2, 3),
+							horizontal = True,
+							index = None,
+							label_visibility="collapsed",
+						)
 					)
-				)
-				st.text(grade_field_pretty)
+					st.text(grade_field_dto)
 
-		st.divider()
+			st.divider()
 
-		input_overall_grade = st.radio(
-			label = "Overall grade (1 no damages, 2 no action, 3 re-clean, 4 rework, 5 discard)",
-			options = (1, 2, 3, 4, 5),
-			horizontal = True,
-			index = None,
-		)
+			input_overall_grade = st.radio(
+				label = "Overall grade (1 no damages, 2 no action, 3 re-clean, 4 rework, 5 discard)",
+				options = (1, 2, 3, 4, 5),
+				horizontal = True,
+				index = None,
+			)
 
-		input_observation = st.text_area(
-			label = "Observations",
-		)
+			input_observation = st.text_input(
+				label = "Observations",
+			)
 
-		input_test_result = st.checkbox(
-			label = "Did the test pass?",
-		)
+			input_thickness = st.text_input(
+				label = "Thickness",
+			)
 
-		st.write("## Upload test images")
+			excel_test_result = st.checkbox(
+				label = "Did the test pass?",
+				key = "form_test_passed",
+			)
 
-		input_test_images = st.file_uploader(
-			label = "Please upload a file",
-			type = ["jpg", "jpeg", "png", "gif"],
-			max_upload_size = self.MAX_FILE_UPLOAD_SIZE_MB,
-			accept_multiple_files = True,
-		)
+			st.write("## Upload test images")
 
-		REQUIRED_FIELDS_FILLED = input_component_code and all(grade_input_fields) and input_overall_grade
+			input_test_images = st.file_uploader(
+				label = "Please upload a file",
+				key = "form_test_images",
+				type = ["jpg", "jpeg", "png", "gif"],
+				max_upload_size = self.MAX_FILE_UPLOAD_SIZE_MB,
+				accept_multiple_files = True,
+			)
 
-		if st.button(
-			label = "Submit test",
-			disabled = not REQUIRED_FIELDS_FILLED,
-			help = "Please fill all required fields before submitting results" if not REQUIRED_FIELDS_FILLED else "",
-		):
-			# Upload test data
-			upload_data = {
-				"testType": "VISUAL_INSPECTION",
-				"component": input_component_code,
-				"institution": input_institution,
-				"runNumber": str(input_test_run_number),
-				"passed": input_test_result,
-				"problems": False,
-				"properties": {},
-				"results": {
-					"OVERALL_GRADE": input_overall_grade,
-					"OBSERVATION": input_observation,
-				} | { key: value for key, value in zip(self.GRADE_FIELDS_DTO, grade_input_fields) }, # Adding all grading field values to results
-			}
+			REQUIRED_FIELDS_FILLED = input_component_code and all(grade_input_fields) and input_overall_grade
 
-			st.write("Upload result:")
-			upload_res: dict = self.itk_client.post("uploadTestRunResults", json = upload_data) # type: ignore
+			if st.button(
+				label = "Submit test results",
+				disabled = not REQUIRED_FIELDS_FILLED,
+				help = "Please fill all required fields before submitting results" if not REQUIRED_FIELDS_FILLED else "",
+				width = "stretch",
+			):
+				# Upload test data
 
-			if not upload_res:
-				st.error(f"Error in uploading test results: \n {upload_res}")
-				return
+				range_results = { key: value for key, value in zip(self.RANGE_DTO_FIELDS, grade_input_fields) }
+				upload_data = {
+					"testType": "VISUAL_INSPECTION",
+					"component": input_component_code,
+					"institution": input_institution,
+					"runNumber": str(excel_test_run_number),
+					"passed": excel_test_result,
+					"problems": False,
+					"properties": {},
+					"results": {
+						"OVERALL_GRADE": input_overall_grade,
+						"OBSERVATION": input_observation,
+						"THICKNESS": input_thickness,
+					} | range_results
+				}
 
-			st.success("Results uploaded successfully")
+				st.write("Upload result:")
+				upload_res: dict = self.itk_client.post("uploadTestRunResults", json = upload_data) # type: ignore
 
-			testrun_id = upload_res["testRun"]["id"]
-
-			# Upload test images
-			for image in input_test_images:
-				res = EOS_Uploader_Page().upload_file(
-					file_data = image,
-					file_name = image.name,
-					file_id = image.file_id,
-					code = testrun_id,
-					description = "",
-					upload_type = UploadType.Testrun.value,
-				)
-
-				if not res:
-					st.error(f"Error in uploading file: {image.name}")
+				if not upload_res:
+					st.error(f"Error in uploading test results: \n {upload_res}")
 					return
 
-			st.success("Attachments uploaded successfully")
+				st.success("Results uploaded successfully")
+
+				testrun_id = upload_res["testRun"]["id"]
+
+				# Upload test images
+				for image in input_test_images:
+					res = EOS_Uploader_Page().upload_file(
+						file_data = image,
+						file_name = image.name,
+						file_id = image.file_id,
+						code = testrun_id,
+						description = "",
+						upload_type = UploadType.Testrun.value,
+					)
+
+					if not res:
+						st.error(f"Error in uploading file: {image.name}")
+						return
+
+				st.success("Attachments uploaded successfully")
+
+			with excel_tab:
+				excel_file = st.file_uploader(
+						label = "Upload excel file with results",
+						type = ["xlsx"],
+					)
+
+				excel_test_run_number = st.number_input(
+					label = "Test run number",
+					key= "excel_test_run_number",
+					step = 1,
+					min_value = 1,
+				)
+
+				excel_test_result = st.checkbox(
+					label = "Did the test pass?",
+					key = "excel_test_passed",
+				)
+
+				st.write("## Upload test images")
+
+				excel_test_images = st.file_uploader(
+					label = "Please upload a file",
+					key = "excel_test_images",
+					type = ["jpg", "jpeg", "png", "gif"],
+					max_upload_size = self.MAX_FILE_UPLOAD_SIZE_MB,
+					accept_multiple_files = True,
+				)
+
+				if not excel_file:
+					return
+
+				excel_df = pd.read_excel(
+					excel_file,
+					usecols = ["Description", "Summary"],
+				)
+
+				st.divider()
+				st.write("## Parsed test results")
+				st.dataframe(
+					data = excel_df,
+					height = "content"
+				)
+
+				if st.button(
+					label = "Submit test results",
+					width = "stretch",
+				):
+					# Component code from filename
+					VI_excel_component_code: str = excel_file.name.split(".")[0]
+					auth_user: dict = self.itk_client.get("getUser", json = {"userIdentity": self.itk_client.user.identity}) # type: ignore
+					user_institution_code = auth_user["institutions"][0].get("code")
+
+					DTO_FIELDS = self.RANGE_DTO_FIELDS + self.REST_DTO_FIELDS
+
+					excel_results = { key: value for key, value in zip(DTO_FIELDS, excel_df["Summary"]) }
+
+					upload_data = {
+						"testType": "VISUAL_INSPECTION",
+						"component": VI_excel_component_code,
+						"institution": user_institution_code,
+						"runNumber": str(excel_test_run_number),
+						"passed": excel_test_result,
+						"problems": False,
+						"properties": {},
+						"results": excel_results
+					}
+
+					st.write("Upload result:")
+					upload_res: dict = self.itk_client.post("uploadTestRunResults", json = upload_data) # type: ignore
+
+					if not upload_res:
+						st.error(f"Error in uploading test results: \n {upload_res}")
+						return
+
+					st.success("Results uploaded successfully")
+
+					testrun_id = upload_res["testRun"]["id"]
+
+					# Upload test images
+					for image in excel_test_images:
+						res = EOS_Uploader_Page().upload_file(
+							file_data = image,
+							file_name = image.name,
+							file_id = image.file_id,
+							code = testrun_id,
+							description = "",
+							upload_type = UploadType.Testrun.value,
+						)
+
+						if not res:
+							st.error(f"Error in uploading file: {image.name}")
+							return
+
+					st.success("Attachments uploaded successfully")
 
 if __name__ == "__main__":
 	Visual_Inspection_Page().main()

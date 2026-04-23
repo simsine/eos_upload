@@ -29,6 +29,7 @@ dependencies = [
     "mkdocs-exclude==1.0.2",
     "mkdocs-get-deps==0.2.0",
     "msgpack==1.1.2",
+    "openpyxl>=3.1.5",
     "packaging==26.0",
     "pathspec==1.0.4",
     "platformdirs==4.5.1",
