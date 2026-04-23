@@ -1,4 +1,3 @@
-from itkdb.responses import PagedResponse
 import streamlit as st
 import pandas as pd
 
@@ -26,6 +25,7 @@ class Visual_Inspection_Page(Base_Page):
 		"OBSERVATION",
 		"THICKNESS",
 	]
+	ALL_DTO_FIELDS = RANGE_DTO_FIELDS + REST_DTO_FIELDS
 
 	def main(self):
 		st.set_page_config(page_title="Visual Inspection", page_icon=":material/visibility:")
@@ -212,12 +212,11 @@ class Visual_Inspection_Page(Base_Page):
 				):
 					# Component code from filename
 					VI_excel_component_code: str = excel_file.name.split(".")[0]
+
 					auth_user: dict = self.itk_client.get("getUser", json = {"userIdentity": self.itk_client.user.identity}) # type: ignore
 					user_institution_code = auth_user["institutions"][0].get("code")
 
-					DTO_FIELDS = self.RANGE_DTO_FIELDS + self.REST_DTO_FIELDS
-
-					excel_results = { key: value for key, value in zip(DTO_FIELDS, excel_df["Summary"]) }
+					excel_results = { key: value for key, value in zip(self.ALL_DTO_FIELDS, excel_df["Summary"]) }
 
 					upload_data = {
 						"testType": "VISUAL_INSPECTION",
