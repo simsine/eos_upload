@@ -10,9 +10,6 @@ class Base_Page(metaclass = ABCMeta):
 	PIXELS_PROJECT_CODE = "P"
 	MAX_FILE_UPLOAD_SIZE_MB = 1000
 
-	# Session state keys
-	CURRENT_COMPONENT_CODE_KEY: str = "current_component_code"
-
 	def __init__(self) -> None:
 		itk_client = st.session_state.get("itk_client")
 		if itk_client is None:
