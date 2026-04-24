@@ -153,4 +153,5 @@ class Metrology_Page(Base_Page):
 
 			st.success("Results uploaded successfully")
 
-Metrology_Page().main()
+if __name__ == "__main__":
+	Metrology_Page().main()

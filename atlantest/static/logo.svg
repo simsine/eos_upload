@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+    width="560" height="80" viewBox="0 0 560 80" role="img"
+    aria-label="ITk Triplet Flex PDB - Uploading Tool">
+    <title>ITk Triplet Flex PDB — Uploading Tool</title>
+    <defs>
+        <style>
+            .main {
+            fill: #FFFFFF;
+            font-family: "Inter", "Segoe UI", "Helvetica", Arial, sans-serif;
+            font-weight: 700;
+            font-size: 55px;
+            letter-spacing: 0.2px;
+            }
+            .sub {
+            fill: #FFFFFF;
+            font-family: "Inter", "Segoe UI", "Helvetica", Arial, sans-serif;
+            font-weight: 500;
+            font-size: 30px;
+            letter-spacing: 0.3px;
+            }
+        </style>
+    </defs>
+
+    <g transform="translate(280,18)">
+        <text class="main" x="0" y="25" text-anchor="middle">ITk Triplet Flex PDB</text>
+        <text class="sub" x="10" y="53" text-anchor="middle">Upload Tool</text>
+    </g>
+</svg>

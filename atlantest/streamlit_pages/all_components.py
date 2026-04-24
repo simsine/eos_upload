@@ -7,5 +7,6 @@ class All_Components_Page(Base_Page):
 		st.write("# Components - All")
 		st.write(":red[This page is under construction.]")
 		st.set_page_config(page_title="Components - All", page_icon=":material/list:")
-		
-All_Components_Page().main()
+
+if __name__ == "__main__":
+	All_Components_Page().main()
