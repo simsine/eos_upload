@@ -23,11 +23,7 @@ class Metrology_Page(Base_Page):
 		input_component_code = st.text_input(
 			label = "Component serial number",
 			placeholder = "",
-			value = st.session_state[self.CURRENT_COMPONENT_CODE_KEY] if self.CURRENT_COMPONENT_CODE_KEY in st.session_state else ""
 		)
-
-		if input_component_code:
-			st.session_state[self.CURRENT_COMPONENT_CODE_KEY] = input_component_code
 
 		auth_user: dict = self.itk_client.get("getUser", json = {"userIdentity": self.itk_client.user.identity}) # type: ignore
 		user_institution_code = auth_user["institutions"][0].get("code")
