@@ -20,24 +20,34 @@ class Metrology_Page(Base_Page):
 		st.write("# Metrology")
 		st.set_page_config(page_title="Metrology", page_icon=":material/straighten:")
 
+		st.write("## Upload metrology CSV file")
+		uploaded_file = st.file_uploader("Choose CSV file", type=['csv'])
+		
+		if not uploaded_file:
+			return
+	
+		try:
+			df = pd.read_csv(uploaded_file)
+			json_data = df.to_json(orient='records', indent=2)
+
+			with st.expander("Show parsed JSON"):
+				st.json(json.loads(json_data))
+
+			# Store json_data in session_state to avoid re-reading CSV
+			st.session_state[f'json_data_{uploaded_file.name}'] = json_data
+
+		except Exception as exc:
+			st.error(f"Failed to read {uploaded_file.name}: {exc}")
+
+		st.divider()
+	
+		# Component code from filename
+		metrology_csv_component_code: str = uploaded_file.name.split(".")[0]
+
 		input_component_code = st.text_input(
 			label = "Component serial number",
 			placeholder = "",
-		)
-
-		auth_user: dict = self.itk_client.get("getUser", json = {"userIdentity": self.itk_client.user.identity}) # type: ignore
-		user_institution_code = auth_user["institutions"][0].get("code")
-
-		institutions: PagedResponse = self.itk_client.get("listInstitutions") # type: ignore
-		institution_codes = list(map(lambda institution: institution.get("code"), institutions.data))
-		# We move the institution of the user to the front
-		institution_codes.insert(0, institution_codes.pop(institution_codes.index(user_institution_code)))
-
-		input_institution = st.selectbox(
-			label = "Institution",
-			accept_new_options = False,
-			options = institution_codes,
-			index = 0, # Since the user institution should be at index 0
+			value = metrology_csv_component_code if metrology_csv_component_code else "",
 		)
 
 		input_test_run_number = st.number_input(
@@ -46,40 +56,14 @@ class Metrology_Page(Base_Page):
 			min_value = 1,
 		)
 
-		st.divider()
-		
-		st.write("## Upload metrology CSV files")
-		uploaded_files = st.file_uploader("Choose CSV files", type=['csv'], accept_multiple_files=True)
-		
-		if uploaded_files:
-			for uploaded_file in uploaded_files:
-				st.write(f"### File: {uploaded_file.name}")
-				try:
-					df = pd.read_csv(uploaded_file)
-					json_data = df.to_json(orient='records', indent=2)
-
-					st.write("Converted JSON:")
-					st.json(json.loads(json_data))
-
-					with st.expander("Show raw JSON"):
-						st.code(json_data, language='json')
-
-					# Store json_data in session_state to avoid re-reading CSV
-					st.session_state[f'json_data_{uploaded_file.name}'] = json_data
-
-				except Exception as exc:
-					st.error(f"Failed to read {uploaded_file.name}: {exc}")
-		
-		st.write("---")
-
 		input_test_result = st.selectbox(
-			"Did the test pass?",
-			("PASSED", "NOT PASSED"),
-			index=None,
-			placeholder="Select test result",
+			label = "Did the test pass?",
+			options = ("PASSED", "NOT PASSED"),
+			index = None,
+			placeholder = "Select test result",
 		)
 
-		REQUIRED_FIELDS_FILLED = input_component_code and input_institution and input_test_run_number and input_test_result and uploaded_files
+		REQUIRED_FIELDS_FILLED = input_component_code and input_test_run_number and input_test_result and uploaded_file
 
 		if st.button(
 			label = "Submit test",
@@ -98,54 +82,45 @@ class Metrology_Page(Base_Page):
 			all_z = []
 			
 			# Extract Z values for specific fields based on mappings
-			for uploaded_file in uploaded_files:
-				json_str = st.session_state.get(f'json_data_{uploaded_file.name}')
-				if json_str:
-					data = json.loads(json_str)
-					df = pd.DataFrame(data)  # Recreate df from json for processing
+			json_str = st.session_state.get(f'json_data_{uploaded_file.name}')
+			if json_str:
+				data = json.loads(json_str)
+				df = pd.DataFrame(data)  # Recreate df from json for processing
+				
+				df['Name'] = df['Name'].str.strip()
+				for field, codes in mappings.items():
+					matching_rows = df[df['Name'].isin(codes)]
+					if not matching_rows.empty:
+						max_val = matching_rows['Z'].max()
+						results[field] = max(results.get(field, float('-inf')), max_val)
 
-					with st.expander(f"Debug: Name values in {uploaded_file.name}"):
-						found_names = sorted(df['Name'].unique().tolist())
-						expected_codes = sorted({code for codes in mappings.values() for code in codes})
-						st.write("**Found in CSV:**", found_names)
-						st.write("**Expected codes:**", expected_codes)
-						st.write("**Matched:**", sorted(set(found_names) & set(expected_codes)))
-						st.write("**Missing:**", sorted(set(expected_codes) - set(found_names)))
-					
-					df['Name'] = df['Name'].str.strip()
-					for field, codes in mappings.items():
-						matching_rows = df[df['Name'].isin(codes)]
-						if not matching_rows.empty:
-							max_val = matching_rows['Z'].max()
-							results[field] = max(results.get(field, float('-inf')), max_val)
-
-					all_z.extend(df['Z'].tolist())
+				all_z.extend(df['Z'].tolist())
 			
 			# For HEIGHT_GENERAL_COMP, max of Z values not in specific codes
 			if all_z:
 				results["HEIGHT_GENERAL_COMP"] = max(all_z)
 			
+			auth_user: dict = self.itk_client.get("getUser", json = {"userIdentity": self.itk_client.user.identity}) # type: ignore
+			user_institution_code = auth_user["institutions"][0].get("code")
+
 			# Upload test data
 			upload_data = {
 				"testType": "TRIPLET_PCB_METROLOGY",
 				"component": input_component_code,
-				"institution": input_institution,
+				"institution": user_institution_code,
 				"runNumber": str(input_test_run_number),
-				"passed": input_test_result,
+				"passed": True if input_test_result == "PASSED" else False,
 				"problems": False,
 				"properties": {},
 				"results": results
 			}
-			
-			st.write("### Debug")
-			st.json(upload_data)  # Show the data that would be uploaded
 
-			# st.write("Upload result:")
-			# upload_res: dict = self.itk_client.post("uploadTestRunResults", json = upload_data) # type: ignore
+			st.write("Upload result:")
+			upload_res: dict = self.itk_client.post("uploadTestRunResults", json = upload_data) # type: ignore
 
-			# if not upload_res:
-			#    st.error(f"Error in uploading test results: \n {upload_res}")
-			#    return
+			if not upload_res:
+				st.error(f"Error in uploading test results: \n {upload_res}")
+				return
 
 			st.success("Results uploaded successfully")
 
