@@ -99,7 +99,22 @@ class Metrology_Page(Base_Page):
 			# For HEIGHT_GENERAL_COMP, max of Z values not in specific codes
 			if all_z:
 				results["HEIGHT_GENERAL_COMP"] = max(all_z)
-			
+
+			results["HEIGHTS_ARRAY"] = {
+				"Name": [],
+				"X": [],
+				"Y": [],
+				"Height": [],
+			}
+
+			for name in df["Name"].unique():
+				matching_rows = df[df['Name'] == name]
+				max_height_row = matching_rows.loc[matching_rows["Z"].idxmax()]
+				results["HEIGHTS_ARRAY"]["Name"].append(name)
+				results["HEIGHTS_ARRAY"]["X"].append(max_height_row["X"])
+				results["HEIGHTS_ARRAY"]["Y"].append(max_height_row["Y"])
+				results["HEIGHTS_ARRAY"]["Height"].append(max_height_row["Z"])
+
 			auth_user: dict = self.itk_client.get("getUser", json = {"userIdentity": self.itk_client.user.identity}) # type: ignore
 			user_institution_code = auth_user["institutions"][0].get("code")
 
@@ -109,11 +124,13 @@ class Metrology_Page(Base_Page):
 				"component": input_component_code,
 				"institution": user_institution_code,
 				"runNumber": str(input_test_run_number),
-				"passed": True if input_test_result == "PASSED" else False,
+				"passed": input_test_result == "PASSED",
 				"problems": False,
 				"properties": {},
 				"results": results
 			}
+
+			st.json(upload_data)
 
 			st.write("Upload result:")
 			upload_res: dict = self.itk_client.post("uploadTestRunResults", json = upload_data) # type: ignore
