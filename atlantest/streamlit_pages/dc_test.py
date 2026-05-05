@@ -49,7 +49,7 @@ class DC_Test_Page(Base_Page):
 				"institution": HV_json["institution"],
 				"date": HV_json["date"],
 				"runNumber": "1",
-				"passed": True if HV_passed_state == "passed" else False,
+				"passed": HV_passed_state == "passed",
 				"problems": False,
 				"properties": {},
 				"results": HV_json["results"]
@@ -61,7 +61,7 @@ class DC_Test_Page(Base_Page):
 				"institution": RES_json["institution"],
 				"date": RES_json["date"],
 				"runNumber": "1",
-				"passed": True if RES_passed_state == "passed" else False,
+				"passed": RES_passed_state == "passed",
 				"problems": False,
 				"properties": {},
 				"results": RES_json["results"]

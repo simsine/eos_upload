@@ -167,7 +167,7 @@ class Visual_Inspection_Page(Base_Page):
 				excel_file = st.file_uploader(
 						label = "Upload excel file with results",
 						type = ["xlsx"],
-					)
+				)
 
 				excel_test_run_number = st.number_input(
 					label = "Test run number",
