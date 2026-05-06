@@ -116,6 +116,7 @@ class Visual_Inspection_Page(Base_Page):
 
 			if st.button(
 				label = "Submit test results",
+				key = "form_submit_button",
 				disabled = not REQUIRED_FIELDS_FILLED,
 				help = "Please fill all required fields before submitting results" if not REQUIRED_FIELDS_FILLED else "",
 				width = "stretch",
@@ -224,8 +225,10 @@ class Visual_Inspection_Page(Base_Page):
 
 				if st.button(
 					label = "Submit test results",
+					key = "excel_submit_button",
 					width = "stretch",
-					disabled = not input_test_result
+					disabled = not excel_test_result,
+					help = "Please fill all required fields before submitting results" if not excel_test_result else "",
 				):
 					# Component code from filename
 					VI_excel_component_code: str = excel_file.name.split(".")[0]
