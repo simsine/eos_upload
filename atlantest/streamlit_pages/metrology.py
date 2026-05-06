@@ -57,7 +57,7 @@ class Metrology_Page(Base_Page):
 		)
 
 		input_test_result = st.selectbox(
-			label = "Did the test pass?",
+			label = "Test result",
 			options = ("PASSED", "NOT PASSED"),
 			index = None,
 			placeholder = "Select test result",

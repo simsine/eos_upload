@@ -40,8 +40,6 @@ class Visual_Inspection_Page(Base_Page):
 				placeholder = "",
 			)
 
-			st.divider()
-
 			st.write("Grade the following fields from 1 to 3, where 1 is the best grade and 3 the worst grade.")
 
 			form_grade_input_fields = []
@@ -73,9 +71,13 @@ class Visual_Inspection_Page(Base_Page):
 				label = "Observations",
 			)
 
-			form_thickness = st.text_input(
-				label = "Thickness",
+			form_thickness = st.number_input(
+				label = "Thickness (μm)",
+				min_value = 0,
+				step = 1,
 			)
+
+			st.divider()
 
 			form_test_run_number = st.number_input(
 				label = "Test run number",
@@ -85,19 +87,19 @@ class Visual_Inspection_Page(Base_Page):
 			)
 
 			form_test_result = st.selectbox(
-				label = "Did the test pass?",
+				label = "Test result",
 				key = "form_test_result",
 				options = ("PASSED", "NOT PASSED"),
 				index = None,
 				placeholder = "Select test result",
 			)
 
-			st.write("## Upload test images")
+			st.write("### Visual inspection images")
 
 			form_test_images = st.file_uploader(
-				label = "Please upload a file",
+				label = "Upload corresponding visual inspection images",
 				key = "form_test_images",
-				type = ["jpg", "jpeg", "png", "gif"],
+				type = ["jpg", "jpeg", "png"],
 				max_upload_size = self.MAX_FILE_UPLOAD_SIZE_MB,
 				accept_multiple_files = True,
 			)
