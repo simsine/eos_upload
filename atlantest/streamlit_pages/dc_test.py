@@ -69,6 +69,9 @@ class DC_Test_Page(Base_Page):
 
 			st.write("Upload results:")
 
+			st.json(HV_upload_data)
+			st.json(RES_upload_data)
+
 			try:
 				self.itk_client.post("uploadTestRunResults", json = HV_upload_data) # type: ignore
 				self.itk_client.post("uploadTestRunResults", json = RES_upload_data) # type: ignore

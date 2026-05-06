@@ -35,37 +35,20 @@ class Visual_Inspection_Page(Base_Page):
 		form_tab, excel_tab = st.tabs(("Form", "Excel upload"))
 
 		with form_tab:
-			input_component_code = st.text_input(
+			form_component_code = st.text_input(
 				label = "Component serial number",
 				placeholder = "",
-			)
-
-			auth_user: dict = self.itk_client.get("getUser", json = {"userIdentity": self.itk_client.user.identity}) # type: ignore
-			user_institution_code = auth_user["institutions"][0].get("code")
-
-			input_institution = st.selectbox(
-				label = "Institution",
-				accept_new_options = False,
-				options = user_institution_code,
-				index = 0, # Since the user institution should be at index 0
-			)
-
-			excel_test_run_number = st.number_input(
-				label = "Test run number",
-				key = "form_test_run_number",
-				step = 1,
-				min_value = 1,
 			)
 
 			st.divider()
 
 			st.write("Grade the following fields from 1 to 3, where 1 is the best grade and 3 the worst grade.")
 
-			grade_input_fields = []
+			form_grade_input_fields = []
 
 			for grade_field_dto in self.RANGE_DTO_FIELDS:
 				with st.container(horizontal = True, vertical_alignment = "center", horizontal_alignment = "left"):
-					grade_input_fields.append(
+					form_grade_input_fields.append(
 						st.radio(
 							key = grade_field_dto,
 							label = grade_field_dto,
@@ -79,22 +62,29 @@ class Visual_Inspection_Page(Base_Page):
 
 			st.divider()
 
-			input_overall_grade = st.radio(
+			form_overall_grade = st.radio(
 				label = "Overall grade (1 no damages, 2 no action, 3 re-clean, 4 rework, 5 discard)",
 				options = (1, 2, 3, 4, 5),
 				horizontal = True,
 				index = None,
 			)
 
-			input_observation = st.text_input(
+			form_observations = st.text_area(
 				label = "Observations",
 			)
 
-			input_thickness = st.text_input(
+			form_thickness = st.text_input(
 				label = "Thickness",
 			)
 
-			input_test_result = st.selectbox(
+			form_test_run_number = st.number_input(
+				label = "Test run number",
+				key = "form_test_run_number",
+				step = 1,
+				min_value = 1,
+			)
+
+			form_test_result = st.selectbox(
 				label = "Did the test pass?",
 				key = "form_test_result",
 				options = ("PASSED", "NOT PASSED"),
@@ -104,7 +94,7 @@ class Visual_Inspection_Page(Base_Page):
 
 			st.write("## Upload test images")
 
-			input_test_images = st.file_uploader(
+			form_test_images = st.file_uploader(
 				label = "Please upload a file",
 				key = "form_test_images",
 				type = ["jpg", "jpeg", "png", "gif"],
@@ -112,7 +102,7 @@ class Visual_Inspection_Page(Base_Page):
 				accept_multiple_files = True,
 			)
 
-			REQUIRED_FIELDS_FILLED = input_component_code and all(grade_input_fields) and input_overall_grade and input_test_result
+			REQUIRED_FIELDS_FILLED = form_component_code and all(form_grade_input_fields) and form_overall_grade and form_test_result
 
 			if st.button(
 				label = "Submit test results",
@@ -123,19 +113,22 @@ class Visual_Inspection_Page(Base_Page):
 			):
 				# Upload test data
 
-				range_results = { key: value for key, value in zip(self.RANGE_DTO_FIELDS, grade_input_fields) }
+				auth_user: dict = self.itk_client.get("getUser", json = {"userIdentity": self.itk_client.user.identity}) # type: ignore
+				user_institution_code = auth_user["institutions"][0].get("code")
+
+				range_results = { key: value for key, value in zip(self.RANGE_DTO_FIELDS, form_grade_input_fields) }
 				upload_data = {
 					"testType": "VISUAL_INSPECTION",
-					"component": input_component_code,
-					"institution": input_institution,
-					"runNumber": str(excel_test_run_number),
-					"passed": input_test_result == "PASSED",
+					"component": form_component_code,
+					"institution": user_institution_code,
+					"runNumber": str(form_test_run_number),
+					"passed": form_test_result == "PASSED",
 					"problems": False,
 					"properties": {},
 					"results": {
-						"OVERALL_GRADE": input_overall_grade,
-						"OBSERVATION": input_observation,
-						"THICKNESS": input_thickness,
+						"OVERALL_GRADE": form_overall_grade,
+						"OBSERVATION": form_observations,
+						"THICKNESS": form_thickness,
 					} | range_results
 				}
 
@@ -153,7 +146,7 @@ class Visual_Inspection_Page(Base_Page):
 				testrun_id = upload_res["testRun"]["id"]
 
 				# Upload test images
-				for image in input_test_images:
+				for image in form_test_images:
 					try:
 						EOS_Uploader_Page().upload_file(
 							file_data = image,
@@ -176,14 +169,26 @@ class Visual_Inspection_Page(Base_Page):
 
 				if not excel_file:
 					return
+				
+				excel_df = pd.read_excel(
+					excel_file,
+					usecols = ["Description", "Summary"],
+				)
 
-				# Component code from filename
-				metrology_csv_component_code: str = excel_file.name.split(".")[0]
+				with st.expander("Show parsed data"):
+					st.dataframe(
+						data = excel_df,
+						height = "content"
+					)
 
-				input_component_code = st.text_input(
+				st.divider()
+
+				excel_file_component_code: str = excel_file.name.split(".")[0]
+
+				excel_component_code = st.text_input(
 					label = "Component serial number",
 					placeholder = "",
-					value = metrology_csv_component_code if metrology_csv_component_code else "",
+					value = excel_file_component_code if excel_file_component_code else "",
 				)
 
 				excel_test_run_number = st.number_input(
@@ -211,18 +216,6 @@ class Visual_Inspection_Page(Base_Page):
 					accept_multiple_files = True,
 				)
 
-				excel_df = pd.read_excel(
-					excel_file,
-					usecols = ["Description", "Summary"],
-				)
-
-				st.divider()
-				st.write("## Parsed test results")
-				st.dataframe(
-					data = excel_df,
-					height = "content"
-				)
-
 				if st.button(
 					label = "Submit test results",
 					key = "excel_submit_button",
@@ -230,9 +223,6 @@ class Visual_Inspection_Page(Base_Page):
 					disabled = not excel_test_result,
 					help = "Please fill all required fields before submitting results" if not excel_test_result else "",
 				):
-					# Component code from filename
-					VI_excel_component_code: str = excel_file.name.split(".")[0]
-
 					auth_user: dict = self.itk_client.get("getUser", json = {"userIdentity": self.itk_client.user.identity}) # type: ignore
 					user_institution_code = auth_user["institutions"][0].get("code")
 
@@ -240,7 +230,7 @@ class Visual_Inspection_Page(Base_Page):
 
 					upload_data = {
 						"testType": "VISUAL_INSPECTION",
-						"component": VI_excel_component_code,
+						"component": excel_component_code,
 						"institution": user_institution_code,
 						"runNumber": str(excel_test_run_number),
 						"passed": excel_test_result == "PASSED",

@@ -30,7 +30,7 @@ class Metrology_Page(Base_Page):
 			df = pd.read_csv(uploaded_file)
 			json_data = df.to_json(orient='records', indent=2)
 
-			with st.expander("Show parsed JSON"):
+			with st.expander("Show parsed data"):
 				st.json(json.loads(json_data))
 
 			# Store json_data in session_state to avoid re-reading CSV
@@ -99,6 +99,9 @@ class Metrology_Page(Base_Page):
 			# For HEIGHT_GENERAL_COMP, max of Z values not in specific codes
 			if all_z:
 				results["HEIGHT_GENERAL_COMP"] = max(all_z)
+
+			# The component is cut out because the file has been created
+			results["CUT_OUT"] = True
 
 			results["HEIGHTS_ARRAY"] = {
 				"Name": [],
