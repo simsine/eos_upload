@@ -94,9 +94,12 @@ class Visual_Inspection_Page(Base_Page):
 				label = "Thickness",
 			)
 
-			excel_test_result = st.checkbox(
+			input_test_result = st.selectbox(
 				label = "Did the test pass?",
-				key = "form_test_passed",
+				key = "form_test_result",
+				options = ("PASSED", "NOT PASSED"),
+				index = None,
+				placeholder = "Select test result",
 			)
 
 			st.write("## Upload test images")
@@ -109,7 +112,7 @@ class Visual_Inspection_Page(Base_Page):
 				accept_multiple_files = True,
 			)
 
-			REQUIRED_FIELDS_FILLED = input_component_code and all(grade_input_fields) and input_overall_grade
+			REQUIRED_FIELDS_FILLED = input_component_code and all(grade_input_fields) and input_overall_grade and input_test_result
 
 			if st.button(
 				label = "Submit test results",
@@ -125,7 +128,7 @@ class Visual_Inspection_Page(Base_Page):
 					"component": input_component_code,
 					"institution": input_institution,
 					"runNumber": str(excel_test_run_number),
-					"passed": excel_test_result,
+					"passed": input_test_result == "PASSED",
 					"problems": False,
 					"properties": {},
 					"results": {
@@ -136,10 +139,12 @@ class Visual_Inspection_Page(Base_Page):
 				}
 
 				st.write("Upload result:")
-				upload_res: dict = self.itk_client.post("uploadTestRunResults", json = upload_data) # type: ignore
 
-				if not upload_res:
-					st.error(f"Error in uploading test results: \n {upload_res}")
+				upload_res: dict
+				try:
+					upload_res = self.itk_client.post("uploadTestRunResults", json = upload_data) # type: ignore
+				except Exception as e:
+					st.error(f"Error in uploading test results: \n\n {e}")
 					return
 
 				st.success("Results uploaded successfully")
@@ -148,18 +153,17 @@ class Visual_Inspection_Page(Base_Page):
 
 				# Upload test images
 				for image in input_test_images:
-					res = EOS_Uploader_Page().upload_file(
-						file_data = image,
-						file_name = image.name,
-						file_id = image.file_id,
-						code = testrun_id,
-						description = "",
-						upload_type = UploadType.Testrun.value,
-					)
-
-					if not res:
-						st.error(f"Error in uploading file: {image.name}")
-						return
+					try:
+						EOS_Uploader_Page().upload_file(
+							file_data = image,
+							file_name = image.name,
+							file_id = image.file_id,
+							code = testrun_id,
+							description = "",
+							upload_type = UploadType.Testrun.value,
+						)
+					except Exception as e:
+						st.error(f"Error in uploading file {image.name}. \n\n {e}")
 
 				st.success("Attachments uploaded successfully")
 
@@ -169,6 +173,18 @@ class Visual_Inspection_Page(Base_Page):
 						type = ["xlsx"],
 				)
 
+				if not excel_file:
+					return
+
+				# Component code from filename
+				metrology_csv_component_code: str = excel_file.name.split(".")[0]
+
+				input_component_code = st.text_input(
+					label = "Component serial number",
+					placeholder = "",
+					value = metrology_csv_component_code if metrology_csv_component_code else "",
+				)
+
 				excel_test_run_number = st.number_input(
 					label = "Test run number",
 					key= "excel_test_run_number",
@@ -176,9 +192,12 @@ class Visual_Inspection_Page(Base_Page):
 					min_value = 1,
 				)
 
-				excel_test_result = st.checkbox(
+				excel_test_result = st.selectbox(
 					label = "Did the test pass?",
-					key = "excel_test_passed",
+					key = "excel_test_result",
+					options = ("PASSED", "NOT PASSED"),
+					index = None,
+					placeholder = "Select test result",
 				)
 
 				st.write("## Upload test images")
@@ -190,9 +209,6 @@ class Visual_Inspection_Page(Base_Page):
 					max_upload_size = self.MAX_FILE_UPLOAD_SIZE_MB,
 					accept_multiple_files = True,
 				)
-
-				if not excel_file:
-					return
 
 				excel_df = pd.read_excel(
 					excel_file,
@@ -209,6 +225,7 @@ class Visual_Inspection_Page(Base_Page):
 				if st.button(
 					label = "Submit test results",
 					width = "stretch",
+					disabled = not input_test_result
 				):
 					# Component code from filename
 					VI_excel_component_code: str = excel_file.name.split(".")[0]
@@ -223,17 +240,19 @@ class Visual_Inspection_Page(Base_Page):
 						"component": VI_excel_component_code,
 						"institution": user_institution_code,
 						"runNumber": str(excel_test_run_number),
-						"passed": excel_test_result,
+						"passed": excel_test_result == "PASSED",
 						"problems": False,
 						"properties": {},
 						"results": excel_results
 					}
 
 					st.write("Upload result:")
-					upload_res: dict = self.itk_client.post("uploadTestRunResults", json = upload_data) # type: ignore
 
-					if not upload_res:
-						st.error(f"Error in uploading test results: \n {upload_res}")
+					upload_res: dict
+					try:
+						upload_res = self.itk_client.post("uploadTestRunResults", json = upload_data) # type: ignore
+					except Exception as e:
+						st.error(f"Error in uploading test results: \n\n {e}")
 						return
 
 					st.success("Results uploaded successfully")
@@ -242,18 +261,17 @@ class Visual_Inspection_Page(Base_Page):
 
 					# Upload test images
 					for image in excel_test_images:
-						res = EOS_Uploader_Page().upload_file(
-							file_data = image,
-							file_name = image.name,
-							file_id = image.file_id,
-							code = testrun_id,
-							description = "",
-							upload_type = UploadType.Testrun.value,
-						)
-
-						if not res:
-							st.error(f"Error in uploading file: {image.name}")
-							return
+						try:
+							EOS_Uploader_Page().upload_file(
+								file_data = image,
+								file_name = image.name,
+								file_id = image.file_id,
+								code = testrun_id,
+								description = "",
+								upload_type = UploadType.Testrun.value,
+							)
+						except Exception as e:
+							st.error(f"Error in uploading file {image.name}. \n\n {e}")
 
 					st.success("Attachments uploaded successfully")
 

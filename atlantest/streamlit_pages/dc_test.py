@@ -68,13 +68,12 @@ class DC_Test_Page(Base_Page):
 			}
 
 			st.write("Upload results:")
-			HV_upload_result: dict = self.itk_client.post("uploadTestRunResults", json = HV_upload_data) # type: ignore
-			RES_upload_result: dict = self.itk_client.post("uploadTestRunResults", json = RES_upload_data) # type: ignore
 
-			if not HV_upload_result or not RES_upload_result:
-				st.error("Error in uploading test results:")
-				st.error(HV_upload_result)
-				st.error(RES_upload_result)
+			try:
+				self.itk_client.post("uploadTestRunResults", json = HV_upload_data) # type: ignore
+				self.itk_client.post("uploadTestRunResults", json = RES_upload_data) # type: ignore
+			except Exception as e:
+				st.error(f"Error in uploading test results: \n\n {e}")
 				return
 			
 			st.success("Results uploaded successfully")

@@ -133,10 +133,11 @@ class Metrology_Page(Base_Page):
 			st.json(upload_data)
 
 			st.write("Upload result:")
-			upload_res: dict = self.itk_client.post("uploadTestRunResults", json = upload_data) # type: ignore
 
-			if not upload_res:
-				st.error(f"Error in uploading test results: \n {upload_res}")
+			try:
+				self.itk_client.post("uploadTestRunResults", json = upload_data) # type: ignore
+			except Exception as e:
+				st.error(f"Error in uploading test results: \n\n {e}")
 				return
 
 			st.success("Results uploaded successfully")
