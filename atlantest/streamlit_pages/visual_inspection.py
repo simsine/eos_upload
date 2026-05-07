@@ -1,3 +1,6 @@
+import json
+
+from itkdb.exceptions import BadRequest
 import streamlit as st
 import pandas as pd
 
@@ -139,8 +142,12 @@ class Visual_Inspection_Page(Base_Page):
 				upload_res: dict
 				try:
 					upload_res = self.itk_client.post("uploadTestRunResults", json = upload_data) # type: ignore
-				except Exception as e:
-					st.error(f"Error in uploading test results: \n\n {e}")
+				except BadRequest as e:
+					error_content_json: dict = json.loads(e.response.content.decode())
+					error_messages = [error["message"] for error in error_content_json["uuAppErrorMap"].values()]
+					st.error(f"Failed uploading test results, errors: {error_messages}")
+					with st.expander("See raw errors"):
+						st.json(error_content_json["uuAppErrorMap"])
 					return
 
 				st.success("Results uploaded successfully")
@@ -246,8 +253,12 @@ class Visual_Inspection_Page(Base_Page):
 					upload_res: dict
 					try:
 						upload_res = self.itk_client.post("uploadTestRunResults", json = upload_data) # type: ignore
-					except Exception as e:
-						st.error(f"Error in uploading test results: \n\n {e}")
+					except BadRequest as e:
+						error_content_json: dict = json.loads(e.response.content.decode())
+						error_messages = [error["message"] for error in error_content_json["uuAppErrorMap"].values()]
+						st.error(f"Failed uploading test results, errors: {error_messages}")
+						with st.expander("See raw errors"):
+							st.json(error_content_json["uuAppErrorMap"])
 						return
 
 					st.success("Results uploaded successfully")
