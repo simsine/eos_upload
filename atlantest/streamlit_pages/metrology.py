@@ -134,9 +134,11 @@ class Metrology_Page(Base_Page):
 				"results": results
 			}
 
-			st.json(upload_data)
 
 			st.write("Upload result:")
+
+			with st.expander("See results JSON"):
+				st.json(upload_data)
 
 			try:
 				self.itk_client.post("uploadTestRunResults", json = upload_data) # type: ignore

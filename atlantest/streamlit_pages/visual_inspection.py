@@ -1,4 +1,5 @@
 import json
+import math
 
 from itkdb.exceptions import BadRequest
 import streamlit as st
@@ -152,6 +153,9 @@ class Visual_Inspection_Page(Base_Page):
 
 				st.success("Results uploaded successfully")
 
+				with st.expander("See results JSON"):
+					st.json(upload_data)
+
 				testrun_id = upload_res["testRun"]["id"]
 
 				# Upload test images
@@ -237,6 +241,24 @@ class Visual_Inspection_Page(Base_Page):
 
 					excel_results = { key: value for key, value in zip(self.ALL_DTO_FIELDS, excel_df["Summary"]) }
 
+					thickness = excel_results["THICKNESS"]
+
+					st.help(thickness)
+
+					if type(thickness) is str:
+						split = thickness.split(", ")
+						if len(split) == 2: # Field is in format of xxx, xxx
+							value1 = float(split[0])
+							value2 = float(split[1])
+							sum = (value1 + value2) / 2
+							excel_results["THICKNESS"] = sum
+						else:
+							st.error("Unexpected format in Thickness field")
+							return
+					
+					if math.isnan(excel_results["OBSERVATION"]):
+						excel_results["OBSERVATION"] = ""
+
 					upload_data = {
 						"testType": "VISUAL_INSPECTION",
 						"component": excel_component_code,
@@ -249,6 +271,9 @@ class Visual_Inspection_Page(Base_Page):
 					}
 
 					st.write("Upload result:")
+
+					with st.expander("See results JSON"):
+						st.json(upload_data)
 
 					upload_res: dict
 					try:
