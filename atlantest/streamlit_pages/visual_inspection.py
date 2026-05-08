@@ -243,8 +243,6 @@ class Visual_Inspection_Page(Base_Page):
 
 					thickness = excel_results["THICKNESS"]
 
-					st.help(thickness)
-
 					if type(thickness) is str:
 						split = thickness.split(", ")
 						if len(split) == 2: # Field is in format of xxx, xxx
