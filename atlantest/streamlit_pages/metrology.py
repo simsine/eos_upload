@@ -1,7 +1,8 @@
+import json
+
 from itkdb.exceptions import BadRequest
 import streamlit as st
 import pandas as pd
-import json
 
 from atlantest.base_page import Base_Page
 
@@ -14,7 +15,14 @@ class Metrology_Page(Base_Page):
 		"HEIGHT_LV_CONN",
 		"HEIGHT_HV_CONN",
 		"HEIGHT_GENERAL_COMP",
-		"ENVELOPE"
+		"ENVELOPE",
+	}
+
+	MAPPINGS = {
+		"HEIGHT_DATA_CONN": ["J103"],
+		# "HEIGHT_CRITICAL_COMP" : "UNKNOWN", # Critical component still not decided
+		"HEIGHT_LV_CONN": ["J101", "J102"], # We take the max of J101 and J102 for HEIGHT_LV_CONN
+		"HEIGHT_HV_CONN": ["C101"],
 	}
 
 	def main(self):
@@ -73,12 +81,6 @@ class Metrology_Page(Base_Page):
 		):
 			# Process stored json_data to populate results
 			results = {}
-			mappings = {
-				"HEIGHT_DATA_CONN": ["J103"],
-				# "HEIGHT_CRITICAL_COMP" : "UNKNOWN", # Critical component still not decided
-				"HEIGHT_LV_CONN": ["J101", "J102"], # We take the max of J101 and J102 for HEIGHT_LV_CONN
-				"HEIGHT_HV_CONN": ["C101"],
-			}
 			
 			all_z = []
 			
@@ -89,7 +91,7 @@ class Metrology_Page(Base_Page):
 				df = pd.DataFrame(data)  # Recreate df from json for processing
 				
 				df['Name'] = df['Name'].str.strip()
-				for field, codes in mappings.items():
+				for field, codes in self.MAPPINGS.items():
 					matching_rows = df[df['Name'].isin(codes)]
 					if not matching_rows.empty:
 						max_val = matching_rows['Z'].max()
