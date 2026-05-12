@@ -28,10 +28,10 @@ class DC_Test_Page(Base_Page):
 		RES_component_code = RES_test_type = RES_date = RES_passed_state = None
 
 		if HV_test_file:
-			HV_component_code, HV_test_type, HV_date, HV_passed_state = HV_test_file.name.split("_")
+			HV_component_code, HV_test_type, HV_date, HV_passed_state = HV_test_file.name.split(".")[0].split("_")
 	
 		if RES_test_file:
-			RES_component_code, RES_test_type, RES_date, RES_passed_state = RES_test_file.name.split("_")
+			RES_component_code, RES_test_type, RES_date, RES_passed_state = RES_test_file.name.split(".")[0].split("_")
 		
 		if HV_test_file and HV_test_type != "HV":
 			st.error("HV test filename does not contain *HV*, is this the correct file?")
