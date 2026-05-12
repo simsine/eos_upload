@@ -57,3 +57,4 @@ For documentation on the used libraries see the following:
 - [ITkdb Docs](https://itkdb.docs.cern.ch/latest/) for docs on the ITkdb python wrapper
 - [ITkpd Docs](https://uuapp.plus4u.net/uu-bookkit-maing01/41f76117152c4c6e947f498339998055/book/page?code=home) for docs on the application model of the ITkpd system
 - [Streamlit Docs](https://docs.streamlit.io/) for docs on the Streamlit UI framework
+- [uv Docs](https://docs.astral.sh/uv/) for docs on managing dependencies
