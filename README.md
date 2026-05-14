@@ -2,7 +2,7 @@
 
 ## uv package manager
 
-To run this project you need to have the uv package manage for python installed
+To run this project you need to have the uv package manager for python installed
 Follow the instructions in [the uv docs](https://docs.astral.sh/uv/getting-started/installation/)
 
 Confirm that uv is installed in your shell by typing uv help, this should print the help information from uv
@@ -41,14 +41,17 @@ setenv ITKDB_ACCESS_CODE1 <code>
 setenv ITKDB_ACCESS_CODE2 <code>
 ```
 
-## Initializing the project
+# Running the program
 
 After you have confirmed your installation of uv works you can run the following command to start the app. 
-uv will automatically handle the setup and installation of the required project dependencies and run the program.
+uv will automatically handle the installation of the required project dependencies and run the program.
 
 ```bash
 uv run -- streamlit run --server.runOnSave=true --server.showEmailPrompt=false
 ```
+
+There are also provided shell scripts in the form of `run.ps1` for Windows and `run.sh` which contain the same command as the one above.
+These scripts can potentially be used as entrypoints for desktop-shortcuts, background process schedulers such as systemd or similar use cases for easy access to starting the application.
 
 # Documentation
 

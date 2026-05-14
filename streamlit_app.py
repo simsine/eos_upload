@@ -48,10 +48,6 @@ streamlit_pages = st.navigation({
 	"Utilities" : [
 		st.Page(PAGES_DIR + "eos_uploader.py", title="EOS Uploader", icon=":material/add_photo_alternate:"),
 	],
-	"Components" : [
-		st.Page(PAGES_DIR + "all_components.py", title="All", icon=":material/list:"),
-		st.Page(PAGES_DIR + "ready_to_ship.py", title="Ready to Ship", icon=":material/package_2:"),
-	]
 })
 
 auth_user: dict = itk_client.get("getUser", json={"userIdentity": itk_client.user.identity}) # type: ignore

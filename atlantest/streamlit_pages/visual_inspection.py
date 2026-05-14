@@ -254,6 +254,7 @@ class Visual_Inspection_Page(Base_Page):
 							st.error("Unexpected format in Thickness field")
 							return
 					
+					# Because empty field is parsed as NaN which is not allowed for upload
 					if math.isnan(excel_results["OBSERVATION"]):
 						excel_results["OBSERVATION"] = ""
 
