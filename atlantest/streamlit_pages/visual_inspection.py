@@ -44,6 +44,7 @@ class Visual_Inspection_Page(Base_Page):
 				placeholder = "",
 			)
 
+			st.write("## Inspection grades")
 			st.write("Grade the following fields from 1 to 3, where 1 is the best grade and 3 the worst grade.")
 
 			form_grade_input_fields = []
@@ -98,7 +99,7 @@ class Visual_Inspection_Page(Base_Page):
 				placeholder = "Select test result",
 			)
 
-			st.write("### Visual inspection images")
+			st.write("## Inspection images")
 
 			form_test_images = st.file_uploader(
 				label = "Upload corresponding visual inspection images",
