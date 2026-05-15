@@ -1,3 +1,4 @@
+from datetime import datetime
 import json
 import math
 
@@ -124,6 +125,13 @@ class Visual_Inspection_Page(Base_Page):
 				user_institution_code = auth_user["institutions"][0].get("code")
 
 				range_results = { key: value for key, value in zip(self.RANGE_DTO_FIELDS, form_grade_input_fields) }
+
+				results = {
+					"OVERALL_GRADE": form_overall_grade,
+					"OBSERVATION": form_observations,
+					"THICKNESS": form_thickness,
+				} | range_results
+				
 				upload_data = {
 					"testType": "VISUAL_INSPECTION",
 					"component": form_component_code,
@@ -132,11 +140,7 @@ class Visual_Inspection_Page(Base_Page):
 					"passed": form_test_result == "PASSED",
 					"problems": False,
 					"properties": {},
-					"results": {
-						"OVERALL_GRADE": form_overall_grade,
-						"OBSERVATION": form_observations,
-						"THICKNESS": form_thickness,
-					} | range_results
+					"results": results,
 				}
 
 				st.write("Upload result:")
@@ -148,16 +152,23 @@ class Visual_Inspection_Page(Base_Page):
 					error_content_json: dict = json.loads(e.response.content.decode())
 					error_messages = [error["message"] for error in error_content_json["uuAppErrorMap"].values()]
 					st.error(f"Failed uploading test results, errors: {error_messages}")
+
 					with st.expander("See raw errors"):
 						st.json(error_content_json["uuAppErrorMap"])
+
 					return
+
+				testrun_id = upload_res["testRun"]["id"]
 
 				st.success("Results uploaded successfully")
 
-				with st.expander("See results JSON"):
-					st.json(upload_data)
+				st.link_button("See upload in ITkpd", f"https://itkpd.unicornuniversity.net/testRunView?id={testrun_id}")
 
-				testrun_id = upload_res["testRun"]["id"]
+				date_str = datetime.now().strftime("%Y-%m-%dT%H:%MZ")
+
+				passed = "passed" if upload_data["passed"] else "failed"
+
+				st.download_button("Download results", json.dumps(upload_data), f"{upload_data['component']}_VI_{date_str[:10]}_{passed}.json", "text/json")
 
 				# Upload test images
 				for image in form_test_images:
