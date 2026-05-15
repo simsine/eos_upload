@@ -162,13 +162,13 @@ class Visual_Inspection_Page(Base_Page):
 
 				st.success("Results uploaded successfully")
 
-				st.link_button("See upload in ITkpd", f"https://itkpd.unicornuniversity.net/testRunView?id={testrun_id}")
+				st.link_button("See upload in ITkpd", f"https://itkpd.unicornuniversity.net/testRunView?id={testrun_id}", width = "stretch")
 
 				date_str = datetime.now().strftime("%Y-%m-%dT%H:%MZ")
 
 				passed = "passed" if upload_data["passed"] else "failed"
 
-				st.download_button("Download results", json.dumps(upload_data), f"{upload_data['component']}_VI_{date_str[:10]}_{passed}.json", "text/json")
+				st.download_button("Download results", json.dumps(upload_data), f"{upload_data['component']}_VI_{date_str[:10]}_{passed}.json", "text/json", width = "stretch")
 
 				# Upload test images
 				for image in form_test_images:
