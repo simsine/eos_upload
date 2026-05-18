@@ -47,7 +47,7 @@ After you have confirmed your installation of uv works you can run the following
 uv will automatically handle the installation of the required project dependencies and run the program.
 
 ```bash
-uv run -- streamlit run --server.runOnSave=true --server.showEmailPrompt=false
+uv run -- streamlit run --server.runOnSave=true --server.showEmailPrompt=false --browser.serverAddress localhost
 ```
 
 There are also provided shell scripts in the form of `run.ps1` for Windows and `run.sh` which contain the same command as the one above.
