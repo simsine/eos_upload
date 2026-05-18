@@ -67,6 +67,33 @@ class EOS_Uploader_Page(Base_Page):
 		description: str,
 		upload_type: str,
 	) -> Response | None:
+		"""
+		Upload a file to the EOS system.
+
+		This method handles uploading image files to either Component or TestRun
+		attachments in the ITK database. The appropriate endpoint is selected based
+		on the upload_type parameter.
+
+		Parameters
+		----------
+		file_data : BytesIO
+			Binary file data to upload
+		file_name : str
+			Name of the file to display in the system
+		file_id : str
+			Unique identifier for the file
+		code : str
+			Either a Component serial number or Test run number, depending on upload_type
+		description : str
+			Human-readable description of the uploaded file
+		upload_type : str
+			Type of upload - either "Component" or "Testrun" (use UploadType enum values)
+
+		Returns
+		-------
+		Response | None
+			Response object from the API if successful, None if an error occurs
+		"""
 		data = {
 			"title": file_name,
 			"description": description,
